@@ -1,6 +1,13 @@
 <template>
   <div class="container mt-4">
-    <h1 class="mb-4">Person Management (Vue) 3</h1>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h1 class="mb-0">Person Management (Vue) 3</h1>
+      <div>
+        <span v-if="session.authenticated" class="me-3">👤 {{ session.name }}</span>
+        <a v-if="!session.authenticated" :href="loginUrl" class="btn btn-primary btn-sm me-2">Login</a>
+        <button v-else @click="logout" class="btn btn-outline-secondary btn-sm">Logout</button>
+      </div>
+    </div>
     <ul class="nav nav-tabs mb-3">
       <li class="nav-item" v-for="tab in tabs" :key="tab.id">
         <a class="nav-link" :class="{active: activeTab === tab.id}" href="#" @click.prevent="activeTab = tab.id">{{ tab.label }}</a>
@@ -14,7 +21,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import PersonTab from './components/PersonTab.vue';
 import StudentTab from './components/StudentTab.vue';
 import ProfessorTab from './components/ProfessorTab.vue';
@@ -29,6 +36,23 @@ const activeTab = ref('person');
 const showAddressModal = ref(false);
 const modalAddress = ref({});
 let addressCallback = null;
+
+const session = ref({ authenticated: false, name: '' });
+const apiBase = import.meta.env.VITE_API_URL;
+const backendBase = apiBase?.replace(/\/api\/?$/, '') || '';
+const loginUrl = `${backendBase}/oauth2/authorization/github`;
+
+function fetchSession() {
+  fetch(`${apiBase}/auth/me`, { credentials: 'include' })
+    .then(r => r.ok ? r.json() : { authenticated: false })
+    .then(data => session.value = data)
+    .catch(() => session.value = { authenticated: false });
+}
+function logout() {
+  // Invalidate session cookie by hitting Spring Security logout
+  fetch(`${backendBase}/logout`, { method: 'POST', credentials: 'include' })
+    .finally(() => { session.value = { authenticated: false, name: '' }; });
+}
 
 function openAddressModal(address, callback) {
   modalAddress.value = { ...address };
@@ -49,6 +73,8 @@ const activeTabComponent = computed(() => {
   const tab = tabs.find(t => t.id === activeTab.value);
   return tab ? tab.component : null;
 });
+
+onMounted(fetchSession);
 </script>
 
 <style>
