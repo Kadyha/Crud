@@ -72,7 +72,7 @@
 import { ref, computed, onMounted } from 'vue';
 import AddressModal from './AddressModal.vue';
 const showAddressModal = ref(false);
-const apiUrl = '/api/professors';
+const apiUrl = `${import.meta.env.VITE_API_URL}/professors`;
 const professors = ref([]);
 const professor = ref({ firstName: '', lastName: '', email: '', phone: '', salary: '', address: {} });
 const error = ref('');
