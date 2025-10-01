@@ -1,6 +1,7 @@
 com\example\crudapp\repository\StudentRepository.class
 com\example\crudapp\soap\GetAllProfessorsRequest.class
 com\example\crudapp\service\PersonService.class
+com\example\crudapp\soap\PersonSoapDTO.class
 com\example\crudapp\soap\UpdatePersonRequest.class
 com\example\crudapp\soap\GetAllAddressesRequest.class
 com\example\crudapp\config\SecurityConfig.class
@@ -19,9 +20,11 @@ com\example\crudapp\model\Address.class
 com\example\crudapp\service\StudentService.class
 com\example\crudapp\model\Professor.class
 com\example\crudapp\soap\DeletePersonResponse.class
+com\example\crudapp\soap\AddressSoapDTO.class
 com\example\crudapp\soap\GetAllStudentsResponse.class
 com\example\crudapp\controller\StudentController.class
 com\example\crudapp\soap\GetAllAddressesResponse.class
+com\example\crudapp\controller\AuthController.class
 com\example\crudapp\controller\AddressController.class
 com\example\crudapp\service\AddressService.class
 com\example\crudapp\soap\PersonSoapEndpoint.class

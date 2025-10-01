@@ -67,7 +67,9 @@ const persons = ref([]);
 const person = ref({ firstName: '', lastName: '', email: '', phone: '', address: {} });
 const error = ref('');
 function fetchPersons() {
-  fetch(apiUrl).then(res => res.json()).then(data => persons.value = data);
+  fetch(apiUrl, { credentials: 'include' })
+    .then(res => res.json())
+    .then(data => persons.value = data);
 }
 onMounted(fetchPersons);
 function validateAndSavePerson() {
@@ -93,7 +95,8 @@ function savePerson() {
   fetch(url, {
     method,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
+    credentials: 'include'
   }).then(() => {
     person.value = { firstName: '', lastName: '', email: '', phone: '', address: {} };
     fetchPersons();
@@ -103,7 +106,7 @@ function editPerson(p) {
   person.value = { ...p };
 }
 function deletePerson(id) {
-  fetch(`${apiUrl}/${id}`, { method: 'DELETE' }).then(fetchPersons);
+  fetch(`${apiUrl}/${id}`, { method: 'DELETE', credentials: 'include' }).then(fetchPersons);
 }
 function onAddressSave(address) {
   person.value.address = address;

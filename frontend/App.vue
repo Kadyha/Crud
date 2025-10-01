@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h1 class="mb-0">Person Management (Vue) 3</h1>
+      <h1 class="mb-0">Person Management (Vue)</h1>
       <div>
         <span v-if="session.authenticated" class="me-3">👤 {{ session.name }}</span>
         <a v-if="!session.authenticated" :href="loginUrl" class="btn btn-primary btn-sm me-2">Login</a>

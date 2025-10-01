@@ -46,26 +46,29 @@ public class SecurityConfig {
         if (oauth2Enabled && hasOauthClients) {
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login.html", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
                     .anyRequest().authenticated()
                 )
-                .oauth2Login();
+                .oauth2Login(o -> o.loginPage("/login"));
         } else if (isLocal) {
-            // Local dev: protect API with Basic Auth, allow others, enable H2 and SOAP
+            // Local dev: protect API with form login, allow others, enable H2 and SOAP
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
                     .requestMatchers("/api/**").authenticated()
                     .anyRequest().permitAll()
                 )
-                .httpBasic();
+                .formLogin(form -> form
+                    .loginPage("/login.html").permitAll()
+                )
+                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
             // H2 console frames
             http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         } else {
             // Fallback when no OAuth2 clients configured (e.g., Railway without secrets)
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
                     .anyRequest().permitAll()
                 );
         }
