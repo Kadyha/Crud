@@ -1,0 +1,5 @@
+com\example\crudapp\controller\PersonControllerTest.class
+com\example\crudapp\controller\AddressControllerTest.class
+com\example\crudapp\controller\ProfessorControllerTest.class
+com\example\crudapp\CrudAppApplicationTests.class
+com\example\crudapp\controller\StudentControllerTest.class

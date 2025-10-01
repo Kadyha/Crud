@@ -1,0 +1,326 @@
+# --- SOAP Person Examples ---
+# Endpoint: http://localhost:8080/ws
+# Content-Type: text/xml
+
+# Consultar todas las personas
+curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml" --data "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:crud='http://example.com/crudapp/soap'><soapenv:Header/><soapenv:Body><crud:GetAllPersonsRequest/></soapenv:Body></soapenv:Envelope>"
+
+# Crear persona
+curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml" --data "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:crud='http://example.com/crudapp/soap'><soapenv:Header/><soapenv:Body><crud:CreatePersonRequest><crud:person><crud:firstName>Juan</crud:firstName><crud:lastName>Pérez</crud:lastName><crud:email>juan.perez@example.com</crud:email><crud:phone>1234567890</crud:phone><crud:address/></crud:person></crud:CreatePersonRequest></soapenv:Body></soapenv:Envelope>"
+
+# Actualizar persona
+curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml" --data "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:crud='http://example.com/crudapp/soap'><soapenv:Header/><soapenv:Body><crud:UpdatePersonRequest><crud:id>1</crud:id><crud:person><crud:firstName>Juan</crud:firstName><crud:lastName>Pérez</crud:lastName><crud:email>juan.perez@example.com</crud:email><crud:phone>9876543210</crud:phone></crud:person></crud:UpdatePersonRequest></soapenv:Body></soapenv:Envelope>"
+
+# Eliminar persona
+curl -X POST http://localhost:8080/ws -H "Content-Type: text/xml" --data "<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:crud='http://example.com/crudapp/soap'><soapenv:Header/><soapenv:Body><crud:DeletePersonRequest><crud:id>1</crud:id></crud:DeletePersonRequest></soapenv:Body></soapenv:Envelope>"
+# REST API Examples (use with curl or Postman)
+# --------------------------------------------
+# All endpoints are available at http://localhost:8080/api/
+
+# --- Person ---
+# Create a Person
+curl -X POST http://localhost:8080/api/persons -H "Content-Type: application/json" -d '{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phone": "1234567890",
+  "address": {
+    "street": "Main St",
+    "city": "Springfield",
+    "state": "IL",
+    "postalCode": "62704",
+    "country": "USA"
+  }
+}'
+# Get all Persons
+curl http://localhost:8080/api/persons
+# Update a Person
+curl -X PUT http://localhost:8080/api/persons/1 -H "Content-Type: application/json" -d '{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "email": "jane.doe@example.com",
+  "phone": "9876543210",
+  "address": {
+    "street": "Elm St",
+    "city": "Springfield",
+    "state": "IL",
+    "postalCode": "62704",
+    "country": "USA"
+  }
+}'
+# Delete a Person
+curl -X DELETE http://localhost:8080/api/persons/1
+
+# --- Student ---
+# Create a Student
+curl -X POST http://localhost:8080/api/students -H "Content-Type: application/json" -d '{
+  "firstName": "Alice",
+  "lastName": "Smith",
+  "email": "alice.smith@example.com",
+  "phone": "5551234567",
+  "studentNumber": 12345,
+  "averageMark": 85.5,
+  "address": {
+    "street": "Oak St",
+    "city": "Springfield",
+    "state": "IL",
+    "postalCode": "62704",
+    "country": "USA"
+  }
+}'
+# Get all Students
+curl http://localhost:8080/api/students
+# Update a Student
+curl -X PUT http://localhost:8080/api/students/1 -H "Content-Type: application/json" -d '{
+  "firstName": "Bob",
+  "lastName": "Smith",
+  "email": "bob.smith@example.com",
+  "phone": "5559876543",
+  "studentNumber": 54321,
+  "averageMark": 90.0,
+  "address": {
+    "street": "Pine St",
+    "city": "Springfield",
+    "state": "IL",
+    "postalCode": "62704",
+    "country": "USA"
+  }
+}'
+# Delete a Student
+curl -X DELETE http://localhost:8080/api/students/1
+
+# --- Professor ---
+# Create a Professor
+curl -X POST http://localhost:8080/api/professors -H "Content-Type: application/json" -d '{
+  "firstName": "Dr. Emily",
+  "lastName": "Jones",
+  "email": "emily.jones@example.com",
+  "phone": "5551112222",
+  "salary": 50000.0,
+  "address": {
+    "street": "Maple St",
+    "city": "Springfield",
+    "state": "IL",
+    "postalCode": "62704",
+    "country": "USA"
+  }
+}'
+# Get all Professors
+curl http://localhost:8080/api/professors
+# Update a Professor
+curl -X PUT http://localhost:8080/api/professors/1 -H "Content-Type: application/json" -d '{
+  "firstName": "Dr. Mark",
+  "lastName": "Jones",
+  "email": "mark.jones@example.com",
+  "phone": "5553334444",
+  "salary": 60000.0,
+  "address": {
+    "street": "Birch St",
+    "city": "Springfield",
+    "state": "IL",
+    "postalCode": "62704",
+    "country": "USA"
+  }
+}'
+# Delete a Professor
+curl -X DELETE http://localhost:8080/api/professors/1
+
+# --- Address ---
+# Create an Address
+curl -X POST http://localhost:8080/api/addresses -H "Content-Type: application/json" -d '{
+  "street": "Cedar St",
+  "city": "Springfield",
+  "state": "IL",
+  "postalCode": "62704",
+  "country": "USA"
+}'
+# Get all Addresses
+curl http://localhost:8080/api/addresses
+# Update an Address
+curl -X PUT http://localhost:8080/api/addresses/1 -H "Content-Type: application/json" -d '{
+  "street": "Willow St",
+  "city": "Springfield",
+  "state": "IL",
+  "postalCode": "62704",
+  "country": "USA"
+}'
+# Delete an Address
+curl -X DELETE http://localhost:8080/api/addresses/1
+
+
+# SOAP API Examples (use with Postman or SoapUI)
+# ---------------------------------------------
+# Endpoint: http://localhost:8080/ws
+# Content-Type: text/xml
+
+# --- Consultar todos los registros ---
+# Personas
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:GetAllPersonsRequest/>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Estudiantes
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:GetAllStudentsRequest/>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Profesores
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:GetAllProfessorsRequest/>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Direcciones
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:GetAllAddressesRequest/>
+  </soapenv:Body>
+</soapenv:Envelope>
+
+# --- Consultar por ID ---
+# Persona por ID
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:GetPersonByIdRequest>
+      <crud:id>1</crud:id>
+    </crud:GetPersonByIdRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Estudiante por ID
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:GetStudentByIdRequest>
+      <crud:id>1</crud:id>
+    </crud:GetStudentByIdRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Profesor por ID
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:GetProfessorByIdRequest>
+      <crud:id>1</crud:id>
+    </crud:GetProfessorByIdRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Dirección por ID
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:GetAddressByIdRequest>
+      <crud:id>1</crud:id>
+    </crud:GetAddressByIdRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+
+# --- Crear registro (si el endpoint lo soporta) ---
+# Crear Persona
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:CreatePersonRequest>
+      <crud:person>
+        <crud:firstName>Juan</crud:firstName>
+        <crud:lastName>Pérez</crud:lastName>
+        <crud:email>juan.perez@example.com</crud:email>
+        <crud:phone>1234567890</crud:phone>
+        <crud:address/>
+      </crud:person>
+    </crud:CreatePersonRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Crear Estudiante
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:CreateStudentRequest>
+      <crud:student>
+        <crud:firstName>Ana</crud:firstName>
+        <crud:lastName>García</crud:lastName>
+        <crud:email>ana.garcia@example.com</crud:email>
+        <crud:phone>5551234567</crud:phone>
+        <crud:studentNumber>12345</crud:studentNumber>
+        <crud:averageMark>90.5</crud:averageMark>
+      </crud:student>
+    </crud:CreateStudentRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Crear Profesor
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:CreateProfessorRequest>
+      <crud:professor>
+        <crud:firstName>Dr. Luis</crud:firstName>
+        <crud:lastName>Martínez</crud:lastName>
+        <crud:email>luis.martinez@example.com</crud:email>
+        <crud:phone>5551112222</crud:phone>
+        <crud:salary>50000.0</crud:salary>
+      </crud:professor>
+    </crud:CreateProfessorRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+# Crear Dirección
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:CreateAddressRequest>
+      <crud:address>
+        <crud:street>Calle Falsa 123</crud:street>
+        <crud:city>Springfield</crud:city>
+        <crud:state>IL</crud:state>
+        <crud:postalCode>62704</crud:postalCode>
+        <crud:country>USA</crud:country>
+      </crud:address>
+    </crud:CreateAddressRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+
+# --- Actualizar registro (si el endpoint lo soporta) ---
+# Actualizar Persona
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:UpdatePersonRequest>
+      <crud:id>1</crud:id>
+      <crud:person>
+        <crud:firstName>Juan</crud:firstName>
+        <crud:lastName>Pérez</crud:lastName>
+        <crud:email>juan.perez@example.com</crud:email>
+        <crud:phone>9876543210</crud:phone>
+      </crud:person>
+    </crud:UpdatePersonRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+# ... (similar para Student, Professor, Address)
+
+# --- Eliminar registro (si el endpoint lo soporta) ---
+# Eliminar Persona
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:crud="http://example.com/crudapp/soap">
+  <soapenv:Header/>
+  <soapenv:Body>
+    <crud:DeletePersonRequest>
+      <crud:id>1</crud:id>
+    </crud:DeletePersonRequest>
+  </soapenv:Body>
+</soapenv:Envelope>
+# ... (similar para Student, Professor, Address)
+
+# Puedes POSTEAR estos envelopes XML a http://localhost:8080/ws en Postman o SoapUI (Content-Type: text/xml)
+# El WSDL está disponible en: http://localhost:8080/ws?wsdl
+# Si algún método no responde, revisa CrudEndpoint.java y el WSDL para ver los métodos soportados.
+
+# Comments:
+# - All REST endpoints use JSON and are documented above.
+# - All SOAP endpoints use XML and require a SOAP client (Postman, SoapUI, etc.).
+# - Both REST and SOAP are implemented in Java with Spring Boot and JPA/Hibernate.
+# - H2 is used for persistence, but you can switch to any RDBMS.
+# - Frontend is Vue.js for usability, style, and validation.
