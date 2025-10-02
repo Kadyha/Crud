@@ -50,9 +50,10 @@ const session = ref({ authenticated: false, name: '' });
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 const backendBase = apiBase && /^https?:\/\//.test(apiBase) ? apiBase.replace(/\/api\/?$/, '') : '';
 const authProvider = import.meta.env.VITE_AUTH_PROVIDER || 'local'; // 'local' | 'oauth'
+// En Vercel (VITE_API_URL presente) usar URL absoluta al backend; en Docker/local usar rutas relativas para proxy Nginx
 const loginUrl = authProvider === 'oauth'
-  ? `${backendBase}/oauth2/authorization/github`
-  : `${backendBase}/login`;
+  ? (backendBase ? `${backendBase}/oauth2/authorization/github` : '/oauth2/authorization/github')
+  : (backendBase ? `${backendBase}/login` : '/login');
 
 function fetchSession() {
   return fetch(`${apiBase}/auth/me`, { credentials: 'include' })

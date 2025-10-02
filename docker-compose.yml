@@ -33,6 +33,10 @@ services:
       MYSQL_USER: appuser
       MYSQL_PASSWORD: apppass
       APP_FRONTEND_URL: http://localhost:5173
+      # OAuth2 (set your own values or via host env)
+      security.oauth2.enabled: "true"
+      GITHUB_CLIENT_ID: "${GITHUB_CLIENT_ID}"
+      GITHUB_CLIENT_SECRET: "${GITHUB_CLIENT_SECRET}"
     depends_on:
       db:
         condition: service_healthy
@@ -44,7 +48,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_AUTH_PROVIDER: form
+        VITE_AUTH_PROVIDER: oauth
     container_name: crudapp-frontend
     ports:
       - "5173:80"
