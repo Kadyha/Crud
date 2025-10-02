@@ -4,7 +4,7 @@ import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.env.Environment;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -117,7 +117,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile({"local","docker"})
+    @ConditionalOnProperty(name = "app.security.dev-user.enabled", havingValue = "true", matchIfMissing = true)
     public UserDetailsService inMemoryUsers(
             @Value("${app.security.user.name:dev}") String username,
             @Value("${app.security.user.password:dev123}") String password
@@ -133,11 +133,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-    // Use origin patterns to support Vercel preview deployments
+    // Use origin patterns to support Vercel preview deployments and Railway domain
     config.setAllowedOriginPatterns(List.of(
         "http://localhost:5173",
         "https://crud-cohan.vercel.app",
-        "https://*.vercel.app"
+        "https://*.vercel.app",
+        "https://*.railway.app",
+        "https://crud-production-d05d.up.railway.app"
     ));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization","Content-Type"));
