@@ -43,7 +43,8 @@ public class SecurityConfig {
         http.cors(cors -> {});
 
         boolean hasOauthClients = clientRegistrations.getIfAvailable() != null;
-        boolean isLocal = Arrays.asList(env.getActiveProfiles()).contains("local");
+    boolean isLocal = Arrays.asList(env.getActiveProfiles()).contains("local");
+    boolean isDocker = Arrays.asList(env.getActiveProfiles()).contains("docker");
 
         if (oauth2Enabled && hasOauthClients) {
             // In cloud: use OAuth2 login and redirect back to frontend after success
@@ -61,7 +62,7 @@ public class SecurityConfig {
                     .successHandler(successHandler)
                 )
                 .logout(logout -> logout.logoutSuccessUrl(frontendUrl).permitAll());
-        } else if (isLocal) {
+        } else if (isLocal || isDocker) {
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
             // After successful login redirect to Vue dev server (frontendUrl)
@@ -98,7 +99,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    @Profile("local")
+    @Profile({"local","docker"})
     public UserDetailsService inMemoryUsers(
             @Value("${app.security.user.name:dev}") String username,
             @Value("${app.security.user.password:dev123}") String password

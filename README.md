@@ -125,3 +125,37 @@ mvn test
 - See `curl-examples.txt` for ready-to-use REST and SOAP requests
 - All endpoints are available for easy testing and integration
 - The app is ready for extension to more entities or business rules
+
+---
+
+## Docker Compose (Backend + MySQL + Frontend)
+
+Prerequisitos: Docker y Docker Compose.
+
+1) Construir y levantar:
+
+```powershell
+cd crud-app
+docker compose up -d --build
+```
+
+Servicios expuestos:
+- MySQL: 3306 (usuario: appuser, contraseña: apppass, BD: crudapp)
+- Backend: http://localhost:8080 (perfil activo: docker)
+- Frontend: http://localhost:5173
+- Adminer (DB Admin): http://localhost:8081 (Server: db, User: appuser, Pass: apppass, DB: crudapp)
+
+Datos iniciales: se cargan automáticamente desde `src/main/resources/data-docker.sql` (Address, Person básico, varios Students y Professors) al iniciar el backend en Docker.
+
+Detener:
+
+```powershell
+docker compose down
+```
+
+Limpiar volúmenes (borra la base de datos):
+
+```powershell
+docker compose down -v
+```
+

@@ -8,15 +8,23 @@
         <button v-else @click="logout" class="btn btn-outline-secondary btn-sm">Logout</button>
       </div>
     </div>
-    <ul class="nav nav-tabs mb-3">
-      <li class="nav-item" v-for="tab in tabs" :key="tab.id">
-        <a class="nav-link" :class="{active: activeTab === tab.id}" href="#" @click.prevent="activeTab = tab.id">{{ tab.label }}</a>
-      </li>
-    </ul>
-    <div class="card p-4 mb-4">
-      <component :is="activeTabComponent" @address-modal="openAddressModal" @update-address="updateAddress" />
-    </div>
-  <AddressModal v-if="showAddressModal" :address="modalAddress" @save="saveAddress" @close="showAddressModal = false" />
+    <template v-if="session.authenticated">
+      <ul class="nav nav-tabs mb-3">
+        <li class="nav-item" v-for="tab in tabs" :key="tab.id">
+          <a class="nav-link" :class="{active: activeTab === tab.id}" href="#" @click.prevent="activeTab = tab.id">{{ tab.label }}</a>
+        </li>
+      </ul>
+      <div class="card p-4 mb-4">
+        <component :is="activeTabComponent" @address-modal="openAddressModal" @update-address="updateAddress" />
+      </div>
+      <AddressModal v-if="showAddressModal" :address="modalAddress" @save="saveAddress" @close="showAddressModal = false" />
+    </template>
+    <template v-else>
+      <div class="card p-4 text-center">
+        <p class="mb-3">Necesitas iniciar sesión para acceder al contenido.</p>
+        <a :href="loginUrl" class="btn btn-primary">Ir al login</a>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -38,8 +46,9 @@ const modalAddress = ref({});
 let addressCallback = null;
 
 const session = ref({ authenticated: false, name: '' });
-const apiBase = import.meta.env.VITE_API_URL;
-const backendBase = apiBase?.replace(/\/api\/?$/, '') || '';
+// Fallback a mismo origen con proxy Nginx si no hay VITE_API_URL
+const apiBase = import.meta.env.VITE_API_URL || '/api';
+const backendBase = apiBase && /^https?:\/\//.test(apiBase) ? apiBase.replace(/\/api\/?$/, '') : '';
 const authProvider = import.meta.env.VITE_AUTH_PROVIDER || 'local'; // 'local' | 'oauth'
 const loginUrl = authProvider === 'oauth'
   ? `${backendBase}/oauth2/authorization/github`
@@ -89,7 +98,8 @@ const activeTabComponent = computed(() => {
 onMounted(async () => {
   const data = await fetchSession();
   // In local mode, if not authenticated, send user to the local login page
-  if (authProvider === 'local' && !data.authenticated) {
+  if (authProvider !== 'oauth' && !data.authenticated) {
+    // Para 'local' o 'form', redirigir al login del backend bajo mismo origen
     window.location.href = `${backendBase}/login`;
   }
 });

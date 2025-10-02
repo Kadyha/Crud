@@ -1,0 +1,9 @@
+target
+.git
+.gitignore
+**/.DS_Store
+**/node_modules
+**/dist
+**/.env*
+frontend/node_modules
+frontend/dist
