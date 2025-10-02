@@ -1,10 +1,20 @@
-version: "3.9"
-
 services:
   backend:
-    ports:
-      - "8082:8080"
+    env_file:
+      - .env
+    environment:
+      # By default, do NOT enable OAuth2 in docker unless explicitly opted-in via .env
+      # To enable, set OAUTH2_ENABLED=true and provide the Spring OAuth client env vars below
+      # in your local .env file (uncomment the block and set values there, not here).
+      OAUTH2_ENABLED: "${OAUTH2_ENABLED:-false}"
+      APP_FRONTEND_URL: http://localhost:5173
+      #
+      # Optional: enable OAuth2 by defining these variables in your .env (do not set them empty):
+      #   SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT_ID=...
+      #   SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT_SECRET=...
+      #   SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_SCOPE=read:user,user:email
+      #   SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_REDIRECT_URI={baseUrl}/login/oauth2/code/github
+      #
   frontend:
     build:
-      args:
-        VITE_API_URL: http://localhost:8082/api
+      args: {}

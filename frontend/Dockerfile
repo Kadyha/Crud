@@ -9,6 +9,8 @@ ARG VITE_API_URL
 ARG VITE_AUTH_PROVIDER
 ENV VITE_API_URL=$VITE_API_URL
 ENV VITE_AUTH_PROVIDER=$VITE_AUTH_PROVIDER
+# Remove local env files so Docker build doesn't pick Vercel/Railway vars
+RUN rm -f .env .env.local || true
 RUN npm run build
 
 FROM nginx:alpine

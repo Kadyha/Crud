@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -52,14 +53,31 @@ public class SecurityConfig {
             successHandler.setDefaultTargetUrl(frontendUrl);
             successHandler.setAlwaysUseDefaultTargetUrl(true);
 
+            // On OAuth2 failure, send the user back to the SPA home with an error flag
+            AuthenticationFailureHandler failureHandler = (request, response, exception) -> {
+                String target = frontendUrl.endsWith("/") ? frontendUrl + "?login=error" : frontendUrl + "/?login=error";
+                response.sendRedirect(target);
+            };
+
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/login/oauth2/**", "/api/auth/me", "/api/auth/debug").permitAll()
                     .anyRequest().authenticated()
                 )
+                // Habilitar HTTP Basic para herramientas como Postman con usuario dev/dev123
+                .httpBasic(basic -> {})
+                // Usar /login como página única: incluye formulario y link a GitHub
                 .oauth2Login(o -> o
                     .loginPage("/login")
+                    .failureHandler(failureHandler)
                     .successHandler(successHandler)
+                )
+                .formLogin(form -> form
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login")
+                    .successHandler(successHandler)
+                    .failureUrl("/login?error")
+                    .permitAll()
                 )
                 .logout(logout -> logout.logoutSuccessUrl(frontendUrl).permitAll());
         } else if (isLocal || isDocker) {
@@ -72,7 +90,7 @@ public class SecurityConfig {
 
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me", "/api/auth/debug").permitAll()
                     .requestMatchers("/api/**").authenticated()
                     .anyRequest().permitAll()
                 )
@@ -90,7 +108,7 @@ public class SecurityConfig {
             // Fallback when no OAuth2 clients configured (e.g., Railway without secrets)
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me", "/api/auth/debug").permitAll()
                     .anyRequest().permitAll()
                 );
         }

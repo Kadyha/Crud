@@ -141,8 +141,8 @@ docker compose up -d --build
 
 Servicios expuestos:
 - MySQL: 3306 (usuario: appuser, contraseña: apppass, BD: crudapp)
-- Backend: http://localhost:8080 (perfil activo: docker)
-- Frontend: http://localhost:5173
+- Frontend (SPA + proxy): http://localhost:5173
+  - API y Auth se acceden por el mismo origen: http://localhost:5173/api, /login, /oauth2, etc.
 - Adminer (DB Admin): http://localhost:8081 (Server: db, User: appuser, Pass: apppass, DB: crudapp)
 
 Datos iniciales: se cargan automáticamente desde `src/main/resources/data-docker.sql` (Address, Person básico, varios Students y Professors) al iniciar el backend en Docker.
@@ -158,4 +158,38 @@ Limpiar volúmenes (borra la base de datos):
 ```powershell
 docker compose down -v
 ```
+
+### OAuth2 (GitHub) en Docker
+
+Por defecto OAuth2 está desactivado en Docker. Actívalo solo si configuras tu app de GitHub.
+
+1) Crea un GitHub OAuth App (DEV) con Authorization callback URL exacta:
+   http://localhost:5173/login/oauth2/code/github
+
+2) Copia `.env.example` a `.env` en la raíz de `crud-app` y completa:
+
+   - OAUTH2_ENABLED=true
+   - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT_ID
+   - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_CLIENT_SECRET
+   - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_SCOPE=read:user,user:email
+   - SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_REDIRECT_URI={baseUrl}/login/oauth2/code/github
+
+3) Reconstruye/levanta backend (o todo el stack):
+
+```powershell
+docker compose build backend
+docker compose up -d backend
+```
+
+4) Verifica configuración activa:
+
+   - Abre http://localhost:5173/api/auth/debug
+     - Debe mostrar `clientId` (tu client_id DEV)
+     - `redirectUriTemplate` debe ser `{baseUrl}/login/oauth2/code/github`
+
+5) Prueba el login desde la SPA (botón GitHub). Tras autorizar, debe volver a http://localhost:5173.
+
+Notas:
+- Si `/oauth2/authorization/github` responde 404, OAuth2 no está habilitado o faltan variables.
+- Si GitHub dice “redirect_uri is not associated…”, revisa el callback URL en tu app de GitHub.
 

@@ -4,9 +4,12 @@
       <h1 class="mb-0">CRUD Management (Vue)</h1>
       <div>
         <span v-if="session.authenticated" class="me-3">👤 {{ session.name }}</span>
-        <a v-if="!session.authenticated" :href="loginUrl" class="btn btn-primary btn-sm me-2">Login</a>
+        <a v-if="!session.authenticated" :href="loginHref" class="btn btn-primary btn-sm me-2">Login</a>
         <button v-else @click="logout" class="btn btn-outline-secondary btn-sm">Logout</button>
       </div>
+    </div>
+    <div v-if="loginError" class="alert alert-danger" role="alert">
+      Hubo un problema iniciando sesión con GitHub. Inténtalo de nuevo.
     </div>
     <template v-if="session.authenticated">
       <ul class="nav nav-tabs mb-3">
@@ -21,8 +24,8 @@
     </template>
     <template v-else>
       <div class="card p-4 text-center">
-        <p class="mb-3">Necesitas iniciar sesión para acceder al contenido.</p>
-        <a :href="loginUrl" class="btn btn-primary">Ir al login</a>
+        <p class="mb-3">Redirigiendo al login…</p>
+        <a :href="loginHref" class="btn btn-primary">Ir al login</a>
       </div>
     </template>
   </div>
@@ -46,14 +49,25 @@ const modalAddress = ref({});
 let addressCallback = null;
 
 const session = ref({ authenticated: false, name: '' });
+const loginError = ref(false);
 // Fallback a mismo origen con proxy Nginx si no hay VITE_API_URL
 const apiBase = import.meta.env.VITE_API_URL || '/api';
 const backendBase = apiBase && /^https?:\/\//.test(apiBase) ? apiBase.replace(/\/api\/?$/, '') : '';
+const isBrowser = typeof window !== 'undefined';
+const isLocalHost = isBrowser && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+const isDockerLocal = isBrowser && isLocalHost;
 const authProvider = import.meta.env.VITE_AUTH_PROVIDER || 'local'; // 'local' | 'oauth'
 // En Vercel (VITE_API_URL presente) usar URL absoluta al backend; en Docker/local usar rutas relativas para proxy Nginx
-const loginUrl = authProvider === 'oauth'
-  ? (backendBase ? `${backendBase}/oauth2/authorization/github` : '/oauth2/authorization/github')
-  : (backendBase ? `${backendBase}/login` : '/login');
+// Normalize login target:
+// - Docker/local: force same-origin and, if running on localhost with a non-5173 port, normalize to localhost:5173
+// - Cloud (Vercel): use absolute backend when VITE_API_URL provided
+// Single login page (Spring Security default) that includes GitHub link and form login
+let loginHref = '/login';
+if (backendBase) {
+  loginHref = `${backendBase}/login`;
+} else if (isLocalHost && isBrowser && window.location.port && window.location.port !== '5173') {
+  loginHref = `${window.location.protocol}//localhost:5173/login`;
+}
 
 function fetchSession() {
   return fetch(`${apiBase}/auth/me`, { credentials: 'include' })
@@ -63,7 +77,7 @@ function fetchSession() {
 }
 function logout() {
   // Invalidate session cookie by hitting Spring Security logout
-  fetch(`${backendBase}/logout`, { method: 'POST', credentials: 'include' })
+  fetch(isDockerLocal ? '/logout' : `${backendBase}/logout`, { method: 'POST', credentials: 'include' })
     .finally(() => {
       session.value = { authenticated: false, name: '' };
       if (authProvider === 'oauth') {
@@ -97,11 +111,18 @@ const activeTabComponent = computed(() => {
 });
 
 onMounted(async () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('login') === 'error') {
+    loginError.value = true;
+    // limpiar el query param para que no persista al navegar
+    const url = new URL(window.location.href);
+    url.searchParams.delete('login');
+    window.history.replaceState({}, '', url.toString());
+  }
   const data = await fetchSession();
-  // In local mode, if not authenticated, send user to the local login page
-  if (authProvider !== 'oauth' && !data.authenticated) {
-    // Para 'local' o 'form', redirigir al login del backend bajo mismo origen
-    window.location.href = `${backendBase}/login`;
+  // Si no está autenticado, redirigir directamente a la página de login única
+  if (!data.authenticated) {
+    window.location.href = loginHref;
   }
 });
 </script>
