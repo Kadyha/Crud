@@ -10,7 +10,7 @@
     { "source": "/ws/:path*", "destination": "https://crud-production-d05d.up.railway.app/ws/:path*" }
   ],
   "env": {
-    "VITE_API_URL": "https://crud-production-d05d.up.railway.app/api",
+    "VITE_API_URL": "/api",
     "VITE_AUTH_PROVIDER": "oauth"
   }
 }
