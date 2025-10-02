@@ -106,11 +106,26 @@ public class SecurityConfig {
             http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         } else {
             // Fallback when no OAuth2 clients configured (e.g., Railway without secrets)
+            // Protect API with form login and enable Basic for tools; keep login page at /login and process POSTs at /perform_login
+            SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+            successHandler.setDefaultTargetUrl(frontendUrl);
+            successHandler.setAlwaysUseDefaultTargetUrl(true);
+
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me", "/api/auth/debug").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/api/auth/me", "/api/auth/debug").permitAll()
+                    .requestMatchers("/api/**").authenticated()
                     .anyRequest().permitAll()
-                );
+                )
+                .httpBasic(basic -> {})
+                .formLogin(form -> form
+                    .loginPage("/login")
+                    .loginProcessingUrl("/perform_login")
+                    .successHandler(successHandler)
+                    .failureUrl("/login?error")
+                    .permitAll()
+                )
+                .logout(logout -> logout.logoutSuccessUrl(frontendUrl).permitAll());
         }
 
         return http.build();
