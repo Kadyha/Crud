@@ -61,11 +61,10 @@ const authProvider = import.meta.env.VITE_AUTH_PROVIDER || 'local'; // 'local' |
 // Normalize login target:
 // - Docker/local: force same-origin and, if running on localhost with a non-5173 port, normalize to localhost:5173
 // - Cloud (Vercel): use absolute backend when VITE_API_URL provided
-// Single login page (Spring Security default) that includes GitHub link and form login
+// Single login page (Spring Security default), always same-origin
 let loginHref = '/login';
-if (backendBase) {
-  loginHref = `${backendBase}/login`;
-} else if (isLocalHost && isBrowser && window.location.port && window.location.port !== '5173') {
+if (!backendBase && isLocalHost && isBrowser && window.location.port && window.location.port !== '5173') {
+  // Normalizar a 5173 en local si no usamos backendBase
   loginHref = `${window.location.protocol}//localhost:5173/login`;
 }
 
@@ -76,17 +75,12 @@ function fetchSession() {
     .catch(() => ({ authenticated: false }));
 }
 function logout() {
-  // Invalidate session cookie by hitting Spring Security logout
-  fetch(isDockerLocal ? '/logout' : `${backendBase}/logout`, { method: 'POST', credentials: 'include' })
+  // Invalidate session cookie by hitting Spring Security logout (same-origin, proxied por Nginx/Vercel)
+  const logoutUrl = '/logout';
+  fetch(logoutUrl, { method: 'POST', credentials: 'include' })
     .finally(() => {
       session.value = { authenticated: false, name: '' };
-      if (authProvider === 'oauth') {
-        // En producción: volver al frontend en Vercel
-        window.location.href = window.location.origin;
-      } else {
-        // En local: ir al login del backend
-        window.location.href = `${backendBase}/login`;
-      }
+      window.location.href = loginHref;
     });
 }
 
