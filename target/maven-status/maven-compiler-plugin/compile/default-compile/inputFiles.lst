@@ -20,6 +20,7 @@ C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\examp
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\controller\ProfessorController.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\CreateProfessorResponse.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\DeleteProfessorResponse.java
+C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\controller\DbDebugController.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\repository\PersonRepository.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\GetAllStudentsResponse.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\config\WebMvcConfig.java
