@@ -1,5 +1,13 @@
 {
   "version": 2,
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://crud-production-d05d.up.railway.app/api/:path*" },
+    { "source": "/login", "destination": "https://crud-production-d05d.up.railway.app/login" },
+    { "source": "/logout", "destination": "https://crud-production-d05d.up.railway.app/logout" },
+    { "source": "/oauth2/:path*", "destination": "https://crud-production-d05d.up.railway.app/oauth2/:path*" },
+    { "source": "/login/oauth2/:path*", "destination": "https://crud-production-d05d.up.railway.app/login/oauth2/:path*" },
+    { "source": "/ws/:path*", "destination": "https://crud-production-d05d.up.railway.app/ws/:path*" }
+  ],
   "env": {
     "VITE_API_URL": "https://crud-production-d05d.up.railway.app/api",
     "VITE_AUTH_PROVIDER": "oauth"
