@@ -34,11 +34,18 @@ public class SecurityConfig {
         this.env = env;
     }
 
+    private String effectiveFrontendUrl(String configured) {
+        if (configured != null && (configured.startsWith("http://") || configured.startsWith("https://"))) {
+            return configured;
+        }
+        return "/"; // relative root keeps user on same origin (works with Vercel and Docker)
+    }
+
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
         @Value("${security.oauth2.enabled:true}") boolean oauth2Enabled,
-    @Value("${app.frontend.url:/}") String frontendUrl
+        @Value("${app.frontend.url:/}") String frontendUrl
     ) throws Exception {
         http.csrf(csrf -> csrf.disable());
         http.cors(cors -> {});
@@ -49,8 +56,9 @@ public class SecurityConfig {
 
         if (oauth2Enabled && hasOauthClients) {
             // In cloud: use OAuth2 login and redirect back to frontend after success
+            String frontUrl = effectiveFrontendUrl(frontendUrl);
             SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-            successHandler.setDefaultTargetUrl("/");
+            successHandler.setDefaultTargetUrl(frontUrl);
             successHandler.setAlwaysUseDefaultTargetUrl(true);
 
             // On OAuth2 failure, send the user back to the SPA home with an error flag
@@ -78,13 +86,14 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
+                .logout(logout -> logout.logoutSuccessUrl(frontUrl).permitAll());
         } else if (isLocal || isDocker) {
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
             // After successful login redirect to Vue dev server (frontendUrl)
+            String frontUrl = effectiveFrontendUrl(frontendUrl);
             SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-            successHandler.setDefaultTargetUrl("/");
+            successHandler.setDefaultTargetUrl(frontUrl);
             successHandler.setAlwaysUseDefaultTargetUrl(true);
 
             http
@@ -100,14 +109,15 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
+                .logout(logout -> logout.logoutSuccessUrl(frontUrl).permitAll());
             // H2 console frames
             http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         } else {
             // Fallback when no OAuth2 clients configured (e.g., Railway without secrets)
             // Protect API with form login and enable Basic for tools; keep login page at /login and process POSTs at /perform_login
+            String frontUrl = effectiveFrontendUrl(frontendUrl);
             SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-            successHandler.setDefaultTargetUrl("/");
+            successHandler.setDefaultTargetUrl(frontUrl);
             successHandler.setAlwaysUseDefaultTargetUrl(true);
 
             http
@@ -124,7 +134,7 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
+        .logout(logout -> logout.logoutSuccessUrl(frontUrl).permitAll());
         }
 
         return http.build();
