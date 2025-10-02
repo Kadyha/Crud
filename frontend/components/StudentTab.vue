@@ -79,7 +79,8 @@ const students = ref([]);
 const student = ref({ firstName: '', lastName: '', email: '', phone: '', studentNumber: '', averageMark: '', address: {} });
 const error = ref('');
 function fetchStudents() {
-  fetch(apiUrl).then(res => res.json()).then(data => students.value = data);
+  fetch(apiUrl, { credentials: 'include' })
+    .then(res => res.json()).then(data => students.value = data);
 }
 onMounted(fetchStudents);
 function validateAndSaveStudent() {
@@ -108,7 +109,8 @@ function saveStudent() {
   fetch(url, {
     method,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
+    credentials: 'include'
   }).then(() => {
     student.value = { firstName: '', lastName: '', email: '', phone: '', studentNumber: '', averageMark: '', address: {} };
     fetchStudents();
@@ -118,7 +120,7 @@ function editStudent(s) {
   student.value = { ...s };
 }
 function deleteStudent(id) {
-  fetch(`${apiUrl}/${id}`, { method: 'DELETE' }).then(fetchStudents);
+  fetch(`${apiUrl}/${id}`, { method: 'DELETE', credentials: 'include' }).then(fetchStudents);
 }
 function onAddressSave(address) {
   student.value.address = address;

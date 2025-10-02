@@ -5,7 +5,7 @@ import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlElement;
 
 @XmlRootElement(name = "address", namespace = "http://example.com/crudapp/soap")
-@XmlType(propOrder = {"id", "street", "city", "state", "postalCode", "country"})
+@XmlType(name = "AddressDto", propOrder = {"id", "street", "city", "state", "postalCode", "country"})
 public class AddressSoapDTO {
     private Long id;
     private String street;

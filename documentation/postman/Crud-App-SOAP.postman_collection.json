@@ -1,0 +1,225 @@
+{
+  "info": {
+    "name": "Crud App - SOAP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección SOAP para probar endpoints en /ws. Usa {{soapUrl}} y el namespace http://example.com/crudapp/soap."
+  },
+  "item": [
+    {
+      "name": "Persons",
+      "item": [
+        {
+          "name": "GetAllPersons",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:GetAllPersonsRequest/></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "CreatePerson",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:CreatePersonRequest><crud:person><crud:firstName>Juan</crud:firstName><crud:lastName>Pérez</crud:lastName><crud:email>juan.perez@example.com</crud:email><crud:phone>1234567890</crud:phone></crud:person></crud:CreatePersonRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "UpdatePerson",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:UpdatePersonRequest><crud:id>{{entityId}}</crud:id><crud:person><crud:firstName>Juan</crud:firstName><crud:lastName>Pérez</crud:lastName><crud:email>juan.perez@example.com</crud:email><crud:phone>9876543210</crud:phone></crud:person></crud:UpdatePersonRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "DeletePerson",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:DeletePersonRequest><crud:id>{{entityId}}</crud:id></crud:DeletePersonRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "GetPersonById",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:GetPersonByIdRequest><crud:id>{{entityId}}</crud:id></crud:GetPersonByIdRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        {
+          "name": "GetAllStudents",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:GetAllStudentsRequest/></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "GetStudentById",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:GetStudentByIdRequest><crud:id>{{entityId}}</crud:id></crud:GetStudentByIdRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "CreateStudent",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:CreateStudentRequest><crud:student><crud:firstName>Ana</crud:firstName><crud:lastName>García</crud:lastName><crud:email>ana.garcia@example.com</crud:email><crud:phone>555111222</crud:phone><crud:studentNumber>S12345</crud:studentNumber><crud:averageMark>8.5</crud:averageMark></crud:student></crud:CreateStudentRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "UpdateStudent",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:UpdateStudentRequest><crud:id>{{entityId}}</crud:id><crud:student><crud:firstName>Ana</crud:firstName><crud:lastName>García</crud:lastName><crud:email>ana.garcia@example.com</crud:email><crud:phone>555111222</crud:phone><crud:studentNumber>S12345</crud:studentNumber><crud:averageMark>9.0</crud:averageMark></crud:student></crud:UpdateStudentRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "DeleteStudent",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:DeleteStudentRequest><crud:id>{{entityId}}</crud:id></crud:DeleteStudentRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Professors",
+      "item": [
+        {
+          "name": "GetAllProfessors",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:GetAllProfessorsRequest/></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "GetProfessorById",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:GetProfessorByIdRequest><crud:id>{{entityId}}</crud:id></crud:GetProfessorByIdRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "CreateProfessor",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:CreateProfessorRequest><crud:professor><crud:firstName>Carlos</crud:firstName><crud:lastName>López</crud:lastName><crud:email>carlos.lopez@example.com</crud:email><crud:phone>555222333</crud:phone><crud:salary>45000</crud:salary></crud:professor></crud:CreateProfessorRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "UpdateProfessor",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:UpdateProfessorRequest><crud:id>{{entityId}}</crud:id><crud:professor><crud:firstName>Carlos</crud:firstName><crud:lastName>López</crud:lastName><crud:email>carlos.lopez@example.com</crud:email><crud:phone>555222333</crud:phone><crud:salary>47000</crud:salary></crud:professor></crud:UpdateProfessorRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        },
+        {
+          "name": "DeleteProfessor",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:DeleteProfessorRequest><crud:id>{{entityId}}</crud:id></crud:DeleteProfessorRequest></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Addresses",
+      "item": [
+        {
+          "name": "GetAllAddresses",
+          "request": {
+            "method": "POST",
+            "header": [ {"key": "Content-Type", "value": "text/xml"} ],
+            "url": { "raw": "{{soapUrl}}", "host": ["{{soapUrl}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:crud=\"http://example.com/crudapp/soap\"><soapenv:Header/><soapenv:Body><crud:GetAllAddressesRequest/></soapenv:Body></soapenv:Envelope>"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "soapUrl", "value": "http://localhost:8080/ws" },
+    { "key": "entityId", "value": "1" }
+  ]
+}

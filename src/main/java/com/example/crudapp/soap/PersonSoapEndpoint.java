@@ -21,7 +21,11 @@ public class PersonSoapEndpoint {
     @ResponsePayload
     public GetAllPersonsResponse getAllPersons(@RequestPayload GetAllPersonsRequest request) {
         GetAllPersonsResponse response = new GetAllPersonsResponse();
-        response.setPersons(personService.getAllPersons());
+        java.util.List<PersonSoapDTO> dtos = new java.util.ArrayList<>();
+        for (com.example.crudapp.model.Person p : personService.getAllPersons()) {
+            dtos.add(mapToSoapDTO(p));
+        }
+        response.setPersons(dtos);
         return response;
     }
 
@@ -34,6 +38,16 @@ public class PersonSoapEndpoint {
         Person person = mapToEntity(request.getPerson());
         Person created = personService.createPerson(person);
         response.setPerson(mapToSoapDTO(created));
+        return response;
+    }
+
+    // Get person by id
+    @PayloadRoot(namespace = NAMESPACE_URI, localPart = "GetPersonByIdRequest")
+    @ResponsePayload
+    public GetPersonByIdResponse getPersonById(@RequestPayload GetPersonByIdRequest request) {
+        GetPersonByIdResponse response = new GetPersonByIdResponse();
+        java.util.Optional<Person> personOpt = personService.getPersonById(request.getId());
+        response.setPerson(personOpt.map(this::mapToSoapDTO).orElse(null));
         return response;
     }
 

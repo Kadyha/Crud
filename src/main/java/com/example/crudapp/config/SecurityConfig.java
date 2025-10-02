@@ -46,12 +46,21 @@ public class SecurityConfig {
         boolean isLocal = Arrays.asList(env.getActiveProfiles()).contains("local");
 
         if (oauth2Enabled && hasOauthClients) {
+            // In cloud: use OAuth2 login and redirect back to frontend after success
+            SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+            successHandler.setDefaultTargetUrl(frontendUrl);
+            successHandler.setAlwaysUseDefaultTargetUrl(true);
+
             http
                 .authorizeHttpRequests(auth -> auth
                     .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
                     .anyRequest().authenticated()
                 )
-                .oauth2Login(o -> o.loginPage("/login"));
+                .oauth2Login(o -> o
+                    .loginPage("/login")
+                    .successHandler(successHandler)
+                )
+                .logout(logout -> logout.logoutSuccessUrl(frontendUrl).permitAll());
         } else if (isLocal) {
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
@@ -73,7 +82,7 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl(frontendUrl).permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
             // H2 console frames
             http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         } else {
@@ -105,9 +114,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOrigins(List.of(
+    // Use origin patterns to support Vercel preview deployments
+    config.setAllowedOriginPatterns(List.of(
         "http://localhost:5173",
-        "https://crud-cohan.vercel.app"
+        "https://crud-cohan.vercel.app",
+        "https://*.vercel.app"
     ));
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization","Content-Type"));

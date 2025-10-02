@@ -5,8 +5,12 @@ C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\examp
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\GetAllAddressesResponse.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\GetAllProfessorsRequest.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\service\StudentService.java
+C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\package-info.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\repository\ProfessorRepository.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\PersonSoapDTO.java
+C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\ProfessorSoapDTO.java
+C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\config\SoapConfig.java
+C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\controller\WsInfoController.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\service\AddressService.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\GetAllPersonsRequest.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\UpdatePersonResponse.java
@@ -18,6 +22,7 @@ C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\examp
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\GetAllAddressesRequest.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\service\PersonService.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\config\SecurityConfig.java
+C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\StudentSoapDTO.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\controller\ProfessorController.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\repository\StudentRepository.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\PersonSoapEndpoint.java

@@ -32,6 +32,14 @@ mvn spring-boot:run
 - Access SOAP API at: `http://localhost:8080/ws`
 - Access H2 Console at: `http://localhost:8080/h2-console` (JDBC URL: `jdbc:h2:mem:testdb`)
 
+To use MySQL locally instead of H2, create a DB and run with the `mysql-local` profile:
+
+```powershell
+cd crud-app
+mvn spring-boot:run -Dspring-boot.run.profiles=mysql-local
+```
+Configure credentials in `src/main/resources/application-mysql-local.properties`.
+
 ### 2. Frontend (Vue.js)
 ```powershell
 cd crud-app/frontend

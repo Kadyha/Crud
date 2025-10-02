@@ -1,7 +1,7 @@
 <template>
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h1 class="mb-0">Person Management (Vue)</h1>
+      <h1 class="mb-0">CRUD Management (Vue)</h1>
       <div>
         <span v-if="session.authenticated" class="me-3">👤 {{ session.name }}</span>
         <a v-if="!session.authenticated" :href="loginUrl" class="btn btn-primary btn-sm me-2">Login</a>
@@ -54,7 +54,16 @@ function fetchSession() {
 function logout() {
   // Invalidate session cookie by hitting Spring Security logout
   fetch(`${backendBase}/logout`, { method: 'POST', credentials: 'include' })
-    .finally(() => { session.value = { authenticated: false, name: '' }; });
+    .finally(() => {
+      session.value = { authenticated: false, name: '' };
+      if (authProvider === 'oauth') {
+        // En producción: volver al frontend en Vercel
+        window.location.href = window.location.origin;
+      } else {
+        // En local: ir al login del backend
+        window.location.href = `${backendBase}/login`;
+      }
+    });
 }
 
 function openAddressModal(address, callback) {

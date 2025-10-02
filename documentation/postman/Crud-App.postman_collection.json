@@ -1,0 +1,107 @@
+{
+  "info": {
+    "name": "Crud App - REST & Auth",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Colección para probar la API REST del CRUD con login (local y cloud). Usa las variables {{baseUrl}} y {{loginMode}}."
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (local form)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
+            ],
+            "url": { "raw": "{{baseUrl}}/login", "host": ["{{baseUrl}}"], "path": ["login"] },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "username", "value": "{{username}}", "type": "text" },
+                { "key": "password", "value": "{{password}}", "type": "text" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Debería devolver 302 o 200', function() {",
+                  "  pm.expect([200,302,301]).to.include(pm.response.code);",
+                  "});",
+                  "// Guarda cookie JSESSIONID automáticamente en el cookie jar"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Auth status",
+          "request": {
+            "method": "GET",
+            "url": { "raw": "{{baseUrl}}/api/auth/me", "host": ["{{baseUrl}}"], "path": ["api","auth","me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "url": { "raw": "{{baseUrl}}/logout", "host": ["{{baseUrl}}"], "path": ["logout"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Persons",
+      "item": [
+        { "name": "Get all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/persons", "host": ["{{baseUrl}}"], "path": ["api","persons"] } } },
+        { "name": "Get by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/persons/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","persons","{{id}}"] } } },
+        { "name": "Create", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"firstName\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\",\n  \"phone\": \"1234567890\"\n}"}, "url": { "raw": "{{baseUrl}}/api/persons", "host": ["{{baseUrl}}"], "path": ["api","persons"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"firstName\": \"Jane\",\n  \"lastName\": \"Doe\",\n  \"email\": \"jane.doe@example.com\",\n  \"phone\": \"9876543210\"\n}"}, "url": { "raw": "{{baseUrl}}/api/persons/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","persons","{{id}}"] } } },
+        { "name": "Delete", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/persons/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","persons","{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "Students",
+      "item": [
+        { "name": "Get all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api","students"] } } },
+        { "name": "Get by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/students/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","students","{{id}}"] } } },
+        { "name": "Eligible?", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/students/{{id}}/eligible", "host": ["{{baseUrl}}"], "path": ["api","students","{{id}}","eligible"] } } },
+        { "name": "Seminars", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/students/{{id}}/seminars", "host": ["{{baseUrl}}"], "path": ["api","students","{{id}}","seminars"] } } },
+        { "name": "Create", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"firstName\": \"Alice\",\n  \"lastName\": \"Smith\",\n  \"email\": \"alice.smith@example.com\",\n  \"studentNumber\": 12345,\n  \"averageMark\": 85.5\n}"}, "url": { "raw": "{{baseUrl}}/api/students", "host": ["{{baseUrl}}"], "path": ["api","students"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"firstName\": \"Bob\",\n  \"lastName\": \"Smith\",\n  \"email\": \"bob.smith@example.com\",\n  \"studentNumber\": 54321,\n  \"averageMark\": 90\n}"}, "url": { "raw": "{{baseUrl}}/api/students/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","students","{{id}}"] } } },
+        { "name": "Delete", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/students/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","students","{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "Professors",
+      "item": [
+        { "name": "Get all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/professors", "host": ["{{baseUrl}}"], "path": ["api","professors"] } } },
+        { "name": "Get by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/professors/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","professors","{{id}}"] } } },
+        { "name": "Create", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"firstName\": \"Dr. Emily\",\n  \"lastName\": \"Jones\",\n  \"email\": \"emily.jones@example.com\",\n  \"salary\": 50000\n}"}, "url": { "raw": "{{baseUrl}}/api/professors", "host": ["{{baseUrl}}"], "path": ["api","professors"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"firstName\": \"Dr. Mark\",\n  \"lastName\": \"Jones\",\n  \"email\": \"mark.jones@example.com\",\n  \"salary\": 60000\n}"}, "url": { "raw": "{{baseUrl}}/api/professors/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","professors","{{id}}"] } } },
+        { "name": "Delete", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/professors/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","professors","{{id}}"] } } }
+      ]
+    },
+    {
+      "name": "Addresses",
+      "item": [
+        { "name": "Get all", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/addresses", "host": ["{{baseUrl}}"], "path": ["api","addresses"] } } },
+        { "name": "Get by id", "request": { "method": "GET", "url": { "raw": "{{baseUrl}}/api/addresses/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","addresses","{{id}}"] } } },
+        { "name": "Create", "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"street\": \"Cedar St\",\n  \"city\": \"Springfield\",\n  \"postalCode\": \"62704\",\n  \"country\": \"USA\"\n}"}, "url": { "raw": "{{baseUrl}}/api/addresses", "host": ["{{baseUrl}}"], "path": ["api","addresses"] } } },
+        { "name": "Update", "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"}], "body": {"mode":"raw","raw": "{\n  \"street\": \"Willow St\",\n  \"city\": \"Springfield\",\n  \"postalCode\": \"62704\",\n  \"country\": \"USA\"\n}"}, "url": { "raw": "{{baseUrl}}/api/addresses/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","addresses","{{id}}"] } } },
+        { "name": "Delete", "request": { "method": "DELETE", "url": { "raw": "{{baseUrl}}/api/addresses/{{id}}", "host": ["{{baseUrl}}"], "path": ["api","addresses","{{id}}"] } } }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "username", "value": "dev" },
+    { "key": "password", "value": "dev123" },
+    { "key": "id", "value": "1" }
+  ]
+}

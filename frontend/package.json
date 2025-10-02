@@ -7,6 +7,12 @@
     "build": "vite build",
     "preview": "vite preview"
   },
+  "vercel": {
+    "env": {
+      "VITE_API_URL": "https://crud-production-d05d.up.railway.app/api",
+      "VITE_AUTH_PROVIDER": "oauth"
+    }
+  },
   "dependencies": {
     "vue": "^3.4.0"
   },
