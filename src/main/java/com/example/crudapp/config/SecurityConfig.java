@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,7 +36,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
-            @Value("${security.oauth2.enabled:true}") boolean oauth2Enabled
+        @Value("${security.oauth2.enabled:true}") boolean oauth2Enabled,
+        @Value("${app.frontend.url:http://localhost:5173}") String frontendUrl
     ) throws Exception {
         http.csrf(csrf -> csrf.disable());
         http.cors(cors -> {});
@@ -46,29 +48,39 @@ public class SecurityConfig {
         if (oauth2Enabled && hasOauthClients) {
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login.html", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
                     .anyRequest().authenticated()
                 )
                 .oauth2Login(o -> o.loginPage("/login"));
         } else if (isLocal) {
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
+            // Local dev: protect API with form login, allow others, enable H2 and SOAP
+            // After successful login redirect to Vue dev server (frontendUrl)
+            SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
+            successHandler.setDefaultTargetUrl(frontendUrl);
+            successHandler.setAlwaysUseDefaultTargetUrl(true);
+
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
                     .requestMatchers("/api/**").authenticated()
                     .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
-                    .loginPage("/login.html").permitAll()
+                    .loginPage("/login")
+                    .loginProcessingUrl("/login")
+                    .successHandler(successHandler)
+                    .failureUrl("/login?error")
+                    .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
+                .logout(logout -> logout.logoutSuccessUrl(frontendUrl).permitAll());
             // H2 console frames
             http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         } else {
             // Fallback when no OAuth2 clients configured (e.g., Railway without secrets)
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me").permitAll()
                     .anyRequest().permitAll()
                 );
         }

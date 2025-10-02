@@ -40,13 +40,16 @@ let addressCallback = null;
 const session = ref({ authenticated: false, name: '' });
 const apiBase = import.meta.env.VITE_API_URL;
 const backendBase = apiBase?.replace(/\/api\/?$/, '') || '';
-const loginUrl = `${backendBase}/oauth2/authorization/github`;
+const authProvider = import.meta.env.VITE_AUTH_PROVIDER || 'local'; // 'local' | 'oauth'
+const loginUrl = authProvider === 'oauth'
+  ? `${backendBase}/oauth2/authorization/github`
+  : `${backendBase}/login`;
 
 function fetchSession() {
-  fetch(`${apiBase}/auth/me`, { credentials: 'include' })
+  return fetch(`${apiBase}/auth/me`, { credentials: 'include' })
     .then(r => r.ok ? r.json() : { authenticated: false })
-    .then(data => session.value = data)
-    .catch(() => session.value = { authenticated: false });
+    .then(data => { session.value = data; return data; })
+    .catch(() => ({ authenticated: false }));
 }
 function logout() {
   // Invalidate session cookie by hitting Spring Security logout
@@ -74,7 +77,13 @@ const activeTabComponent = computed(() => {
   return tab ? tab.component : null;
 });
 
-onMounted(fetchSession);
+onMounted(async () => {
+  const data = await fetchSession();
+  // In local mode, if not authenticated, send user to the local login page
+  if (authProvider === 'local' && !data.authenticated) {
+    window.location.href = `${backendBase}/login`;
+  }
+});
 </script>
 
 <style>
