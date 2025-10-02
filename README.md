@@ -193,3 +193,38 @@ Notas:
 - Si `/oauth2/authorization/github` responde 404, OAuth2 no está habilitado o faltan variables.
 - Si GitHub dice “redirect_uri is not associated…”, revisa el callback URL en tu app de GitHub.
 
+---
+
+## Despliegue en Cloud (Vercel + Railway)
+
+Objetivo: Mismo comportamiento que Docker (SPA en Vercel, API en Railway) con OAuth2 y login unificado.
+
+1) Backend (Railway)
+- Variables de entorno en Railway:
+  - SPRING_PROFILES_ACTIVE=railway
+  - MYSQL_URL (o MYSQL_HOST/PORT/DATABASE/USER/PASSWORD según tu DB de Railway)
+  - GITHUB_CLIENT_ID=<client_id_prod>
+  - GITHUB_CLIENT_SECRET=<client_secret_prod>
+  - APP_FRONTEND_URL=https://<tu-app>.vercel.app
+- Importante:
+  - Cookies cross-site: el perfil railway ya configura SameSite=None y Secure=true.
+  - Encabezados proxy: `server.forward-headers-strategy=framework` ya activo.
+  - Callback GitHub (PROD): `https://<tu-app>.vercel.app/login/oauth2/code/github`
+
+2) Frontend (Vercel)
+- Configura variables en Vercel (Project → Settings → Environment Variables):
+  - VITE_API_URL=https://<tu-backend>.railway.app/api
+  - VITE_AUTH_PROVIDER=oauth
+- No hardcodeamos valores en `vercel.json`; Vercel inyecta las variables en build.
+
+3) Pruebas
+- Abre tu dominio de Vercel → debe mostrar /login (Spring) y permitir:
+  - “Ingresar con GitHub” (OAuth2 hacia Railway)
+  - Form login (si mantienes credenciales de dev en PROD, no recomendado)
+- Endpoint de diagnóstico: `https://<tu-app>.vercel.app/api/auth/debug` (proxy desde la SPA) o `https://<tu-backend>.railway.app/api/auth/debug` directo, debe mostrar tu clientId y redirectUriTemplate.
+
+4) Problemas comunes
+- “redirect_uri is not associated…”: el callback en GitHub no coincide con Vercel. Debe ser exactamente `https://<tu-app>.vercel.app/login/oauth2/code/github`.
+- Cookies no persisten: revisa que el dominio sea HTTPS y SameSite=None (ya configurado en perfil railway) y que Vercel/Browser no bloquee cookies de terceros.
+- CORS: el perfil railway permite orígenes `https://*.vercel.app` (ver SecurityConfig/CORS). Si usas un dominio custom, añádelo.
+
