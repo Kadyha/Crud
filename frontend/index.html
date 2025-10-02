@@ -5,6 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CRUD App Vue</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Auth gate before SPA loads (works in Vercel via same-origin rewrites)
+      (function(){
+        try {
+          var xhr = new XMLHttpRequest();
+          xhr.open('GET', '/api/auth/me', false); // synchronous, tiny payload
+          xhr.withCredentials = true;
+          xhr.send(null);
+          if (xhr.status === 200) {
+            var data = {};
+            try { data = JSON.parse(xhr.responseText || '{}'); } catch(e) {}
+            if (!data.authenticated) {
+              window.location.replace('/login');
+            }
+          } else {
+            // On error assume not authenticated to be safe
+            window.location.replace('/login');
+          }
+        } catch (e) {
+          // Network error: assume logout
+          window.location.replace('/login');
+        }
+      })();
+    </script>
   </head>
   <body>
   <div id="app"></div>

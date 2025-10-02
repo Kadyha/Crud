@@ -86,7 +86,7 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl(frontUrl).permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
         } else if (isLocal || isDocker) {
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
@@ -109,7 +109,7 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl(frontUrl).permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
             // H2 console frames
             http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         } else {
@@ -134,7 +134,7 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-        .logout(logout -> logout.logoutSuccessUrl(frontUrl).permitAll());
+    .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
         }
 
         return http.build();
