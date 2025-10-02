@@ -38,7 +38,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(
             HttpSecurity http,
         @Value("${security.oauth2.enabled:true}") boolean oauth2Enabled,
-        @Value("${app.frontend.url:http://localhost:5173}") String frontendUrl
+    @Value("${app.frontend.url:/}") String frontendUrl
     ) throws Exception {
         http.csrf(csrf -> csrf.disable());
         http.cors(cors -> {});
@@ -50,18 +50,17 @@ public class SecurityConfig {
         if (oauth2Enabled && hasOauthClients) {
             // In cloud: use OAuth2 login and redirect back to frontend after success
             SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-            successHandler.setDefaultTargetUrl(frontendUrl);
+            successHandler.setDefaultTargetUrl("/");
             successHandler.setAlwaysUseDefaultTargetUrl(true);
 
             // On OAuth2 failure, send the user back to the SPA home with an error flag
             AuthenticationFailureHandler failureHandler = (request, response, exception) -> {
-                String target = frontendUrl.endsWith("/") ? frontendUrl + "?login=error" : frontendUrl + "/?login=error";
-                response.sendRedirect(target);
+                response.sendRedirect("/login?error");
             };
 
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/login/oauth2/**", "/api/auth/me", "/api/auth/debug").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/login/oauth2/**", "/api/auth/me", "/api/auth/debug", "/api/health/**").permitAll()
                     .anyRequest().authenticated()
                 )
                 // Habilitar HTTP Basic para herramientas como Postman con usuario dev/dev123
@@ -79,41 +78,41 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl(frontendUrl).permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
         } else if (isLocal || isDocker) {
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
             // Local dev: protect API with form login, allow others, enable H2 and SOAP
             // After successful login redirect to Vue dev server (frontendUrl)
             SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-            successHandler.setDefaultTargetUrl(frontendUrl);
+            successHandler.setDefaultTargetUrl("/");
             successHandler.setAlwaysUseDefaultTargetUrl(true);
 
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me", "/api/auth/debug").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/ws/**", "/h2-console/**", "/oauth2/**", "/login/**", "/api/auth/me", "/api/auth/debug", "/api/health/**").permitAll()
                     .requestMatchers("/api/**").authenticated()
                     .anyRequest().permitAll()
                 )
                 .formLogin(form -> form
                     .loginPage("/login")
-                    .loginProcessingUrl("/login")
+                    .loginProcessingUrl("/perform_login")
                     .successHandler(successHandler)
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
             // H2 console frames
             http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
         } else {
             // Fallback when no OAuth2 clients configured (e.g., Railway without secrets)
             // Protect API with form login and enable Basic for tools; keep login page at /login and process POSTs at /perform_login
             SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-            successHandler.setDefaultTargetUrl(frontendUrl);
+            successHandler.setDefaultTargetUrl("/");
             successHandler.setAlwaysUseDefaultTargetUrl(true);
 
             http
                 .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/api/auth/me", "/api/auth/debug").permitAll()
+                    .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/api/auth/me", "/api/auth/debug", "/api/health/**").permitAll()
                     .requestMatchers("/api/**").authenticated()
                     .anyRequest().permitAll()
                 )
@@ -125,7 +124,7 @@ public class SecurityConfig {
                     .failureUrl("/login?error")
                     .permitAll()
                 )
-                .logout(logout -> logout.logoutSuccessUrl(frontendUrl).permitAll());
+                .logout(logout -> logout.logoutSuccessUrl("/").permitAll());
         }
 
         return http.build();

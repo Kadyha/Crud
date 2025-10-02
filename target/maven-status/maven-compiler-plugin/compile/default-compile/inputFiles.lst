@@ -48,6 +48,7 @@ C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\examp
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\service\PersonService.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\config\SecurityConfig.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\GetPersonByIdResponse.java
+C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\controller\HealthController.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\repository\StudentRepository.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\PersonSoapEndpoint.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\controller\AddressController.java
