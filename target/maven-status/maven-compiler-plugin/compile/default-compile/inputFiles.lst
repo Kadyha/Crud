@@ -53,6 +53,7 @@ C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\examp
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\repository\StudentRepository.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\PersonSoapEndpoint.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\controller\AddressController.java
+C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\config\StartupEnvLogger.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\CreatePersonRequest.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\soap\DeletePersonResponse.java
 C:\Users\kdyha\Documents\VScodes\prueba_tecnica\crud-app\src\main\java\com\example\crudapp\model\Professor.java
