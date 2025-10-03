@@ -22,9 +22,12 @@
         Usuario o contraseña incorrectos.
       </div>
 
-      <div class="d-grid gap-2 mb-3">
-        <a class="btn btn-dark" href="/oauth2/authorization/github" style="background:#161b22;border-color:#161b22">
+      <div class="d-grid gap-2 mb-3" id="socialButtons">
+        <a id="btnGithub" class="btn btn-dark" href="/oauth2/authorization/github" style="background:#161b22;border-color:#161b22">
           Continuar con GitHub
+        </a>
+        <a id="btnGitlab" class="btn btn-outline-secondary" href="#" disabled aria-disabled="true">
+          Continuar con GitLab (próximamente)
         </a>
       </div>
 
@@ -42,9 +45,7 @@
         <button type="submit" class="btn btn-primary w-100">Entrar</button>
       </form>
 
-      <div class="mt-3 small text-muted">
-        Consejo: si estás en Vercel, este formulario se procesa vía proxy en el backend y las redirecciones permanecen en tu dominio.
-      </div>
+      
     </div>
   </div>
   <script>
@@ -54,6 +55,15 @@
         const params = new URLSearchParams(window.location.search);
         if (params.has('error')) {
           document.getElementById('errorBox').style.display = '';
+        }
+      } catch(e) { /* no-op */ }
+
+      // Si no estamos en Vercel (backend directo), oculta SOLO el botón de GitHub
+      try {
+        const host = (location.host || '').toLowerCase();
+        if (!host.endsWith('.vercel.app')) {
+          const btnGithub = document.getElementById('btnGithub');
+          if (btnGithub) btnGithub.remove();
         }
       } catch(e) { /* no-op */ }
     })();

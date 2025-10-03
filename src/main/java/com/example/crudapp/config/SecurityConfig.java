@@ -98,7 +98,10 @@ public class SecurityConfig {
         if (oauth2Enabled && hasOauthClients) {
             // In cloud: use OAuth2 login and redirect back to frontend after success
             String frontUrl = effectiveFrontendUrl(frontendUrl);
-            AuthenticationSuccessHandler successHandler = hostAwareSuccessHandler(frontUrl);
+            // For OAuth2, always send users back to the SPA (Vercel) on success
+            AuthenticationSuccessHandler oauthSuccessHandler = (request, response, authentication) -> response.sendRedirect(frontUrl);
+            // For form login, respect the origin (Vercel vs backend)
+            AuthenticationSuccessHandler formSuccessHandler = hostAwareSuccessHandler(frontUrl);
             AuthenticationFailureHandler failureHandler = hostAwareFailureHandler(frontUrl);
 
             http
@@ -112,12 +115,12 @@ public class SecurityConfig {
                 .oauth2Login(o -> o
                     .loginPage("/login")
                     .failureHandler(failureHandler)
-                    .successHandler(successHandler)
+                    .successHandler(oauthSuccessHandler)
                 )
                 .formLogin(form -> form
                     .loginPage("/login")
                     .loginProcessingUrl("/perform_login")
-                    .successHandler(successHandler)
+                    .successHandler(formSuccessHandler)
                     .failureHandler(failureHandler)
                     .permitAll()
                 )
