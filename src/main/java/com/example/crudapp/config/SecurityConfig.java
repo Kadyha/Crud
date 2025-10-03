@@ -43,16 +43,25 @@ public class SecurityConfig {
         return "/"; // relative root keeps user on same origin (works with Vercel and Docker)
     }
 
-    private boolean isVercelHost(HttpServletRequest request) {
-        String forwardedHost = request.getHeader("X-Forwarded-Host");
-        String host = forwardedHost != null ? forwardedHost : request.getServerName();
-        return host != null && (host.equals("crud-cohan.vercel.app") || host.endsWith(".vercel.app"));
+    private boolean isVercelRequest(HttpServletRequest request) {
+        String xfh = request.getHeader("X-Forwarded-Host");
+        String fwd = request.getHeader("Forwarded");
+        String referer = request.getHeader("Referer");
+        String origin = request.getHeader("Origin");
+        String server = request.getServerName();
+
+        if (xfh != null && (xfh.equals("crud-cohan.vercel.app") || xfh.endsWith(".vercel.app"))) return true;
+        if (fwd != null && fwd.toLowerCase().contains("host=crud-cohan.vercel.app")) return true;
+        if (fwd != null && fwd.toLowerCase().contains("host=") && fwd.toLowerCase().contains(".vercel.app")) return true;
+        if (referer != null && referer.contains("vercel.app")) return true;
+        if (origin != null && origin.contains("vercel.app")) return true;
+        return server != null && (server.equals("crud-cohan.vercel.app") || server.endsWith(".vercel.app"));
     }
 
     private AuthenticationSuccessHandler hostAwareSuccessHandler(String frontUrl) {
         return (request, response, authentication) -> {
             // If request came through Vercel, go back to frontend URL; else stay on backend domain
-            if (isVercelHost(request)) {
+            if (isVercelRequest(request)) {
                 response.sendRedirect(frontUrl);
             } else {
                 response.sendRedirect("/");
@@ -63,7 +72,7 @@ public class SecurityConfig {
     private AuthenticationFailureHandler hostAwareFailureHandler(String frontUrl) {
         return (request, response, exception) -> {
             // If request came through Vercel, keep user on Vercel login; else backend login
-            if (isVercelHost(request)) {
+            if (isVercelRequest(request)) {
                 // Ensure absolute redirect to the Vercel domain
                 String target = frontUrl.endsWith("/") ? (frontUrl + "login?error") : (frontUrl + "/login?error");
                 response.sendRedirect(target);
