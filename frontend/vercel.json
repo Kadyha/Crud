@@ -9,6 +9,14 @@
     { "source": "/login/oauth2/:path*", "destination": "https://crud-production-d05d.up.railway.app/login/oauth2/:path*" },
     { "source": "/ws/:path*", "destination": "https://crud-production-d05d.up.railway.app/ws/:path*" }
   ],
+  "headers": [
+    {
+      "source": "/(login|perform_login|oauth2|login/oauth2)/:path*",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store" }
+      ]
+    }
+  ],
   "env": {
     "VITE_API_URL": "/api",
     "VITE_AUTH_PROVIDER": "oauth"
