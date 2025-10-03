@@ -15,6 +15,8 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -41,6 +43,36 @@ public class SecurityConfig {
         return "/"; // relative root keeps user on same origin (works with Vercel and Docker)
     }
 
+    private boolean isVercelHost(HttpServletRequest request) {
+        String forwardedHost = request.getHeader("X-Forwarded-Host");
+        String host = forwardedHost != null ? forwardedHost : request.getServerName();
+        return host != null && (host.equals("crud-cohan.vercel.app") || host.endsWith(".vercel.app"));
+    }
+
+    private AuthenticationSuccessHandler hostAwareSuccessHandler(String frontUrl) {
+        return (request, response, authentication) -> {
+            // If request came through Vercel, go back to frontend URL; else stay on backend domain
+            if (isVercelHost(request)) {
+                response.sendRedirect(frontUrl);
+            } else {
+                response.sendRedirect("/");
+            }
+        };
+    }
+
+    private AuthenticationFailureHandler hostAwareFailureHandler(String frontUrl) {
+        return (request, response, exception) -> {
+            // If request came through Vercel, keep user on Vercel login; else backend login
+            if (isVercelHost(request)) {
+                // Ensure absolute redirect to the Vercel domain
+                String target = frontUrl.endsWith("/") ? (frontUrl + "login?error") : (frontUrl + "/login?error");
+                response.sendRedirect(target);
+            } else {
+                response.sendRedirect("/login?error");
+            }
+        };
+    }
+
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
@@ -57,14 +89,8 @@ public class SecurityConfig {
         if (oauth2Enabled && hasOauthClients) {
             // In cloud: use OAuth2 login and redirect back to frontend after success
             String frontUrl = effectiveFrontendUrl(frontendUrl);
-            SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-            successHandler.setDefaultTargetUrl(frontUrl);
-            successHandler.setAlwaysUseDefaultTargetUrl(true);
-
-            // On OAuth2 failure, send the user back to the SPA home with an error flag
-            AuthenticationFailureHandler failureHandler = (request, response, exception) -> {
-                response.sendRedirect("/login?error");
-            };
+            AuthenticationSuccessHandler successHandler = hostAwareSuccessHandler(frontUrl);
+            AuthenticationFailureHandler failureHandler = hostAwareFailureHandler(frontUrl);
 
             http
                 .authorizeHttpRequests(auth -> auth
@@ -83,7 +109,7 @@ public class SecurityConfig {
                     .loginPage("/login")
                     .loginProcessingUrl("/perform_login")
                     .successHandler(successHandler)
-                    .failureUrl("/login?error")
+                    .failureHandler(failureHandler)
                     .permitAll()
                 )
                 .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
@@ -116,9 +142,8 @@ public class SecurityConfig {
             // Fallback when no OAuth2 clients configured (e.g., Railway without secrets)
             // Protect API with form login and enable Basic for tools; keep login page at /login and process POSTs at /perform_login
             String frontUrl = effectiveFrontendUrl(frontendUrl);
-            SavedRequestAwareAuthenticationSuccessHandler successHandler = new SavedRequestAwareAuthenticationSuccessHandler();
-            successHandler.setDefaultTargetUrl(frontUrl);
-            successHandler.setAlwaysUseDefaultTargetUrl(true);
+            AuthenticationSuccessHandler successHandler = hostAwareSuccessHandler(frontUrl);
+            AuthenticationFailureHandler failureHandler = hostAwareFailureHandler(frontUrl);
 
             http
                 .authorizeHttpRequests(auth -> auth
@@ -131,7 +156,7 @@ public class SecurityConfig {
                     .loginPage("/login")
                     .loginProcessingUrl("/perform_login")
                     .successHandler(successHandler)
-                    .failureUrl("/login?error")
+                    .failureHandler(failureHandler)
                     .permitAll()
                 )
     .logout(logout -> logout.logoutSuccessUrl("/login").permitAll());
