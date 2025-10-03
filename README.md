@@ -46,7 +46,7 @@ Objetivo: probar en minutos la app en producción y, si se desea, correrla en lo
    - Abrir: https://crud-cohan.vercel.app
     - Login:
        - Opción 1: “Continuar con GitHub” (OAuth2)
-       - Opción 2: formulario (credenciales enviadas al email de la prueba)
+       - Opción 2: formulario (se habilitó un usuario de prueba, las credenciales fueron enviadas al correo de la prueba)
    - Verificar:
      - Pestañas Persons / Students / Professors (CRUD)
      - Crear/editar un registro y ver la lista actualizada

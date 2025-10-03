@@ -1,479 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD App</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRUD Backend</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background: #f7f9fc; }
+    .card { border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
+  </style>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:;" />
 </head>
 <body>
-<div class="container mt-4">
-    <h1>Person Management</h1>
-    <ul class="nav nav-tabs mb-3" id="mainTabs">
-        <li class="nav-item">
-            <a class="nav-link active" id="tab-persons" href="#">Persons</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="tab-students" href="#">Students</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link" id="tab-professors" href="#">Professors</a>
-        </li>
-    </ul>
-    <div id="person-section">
-        <form id="person-form" class="mb-3">
-            <input type="hidden" id="person-id">
-            <div class="row g-2">
-                <div class="col-md-2">
-                    <input type="text" id="firstName" class="form-control" placeholder="First Name *">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" id="lastName" class="form-control" placeholder="Last Name *">
-                </div>
-                <div class="col-md-2">
-                    <input type="email" id="email" class="form-control" placeholder="Email *">
-                </div>
-                <div class="col-md-2">
-                    <input type="text" id="phone" class="form-control" placeholder="Phone">
-                </div>
-                <div class="col-md-2">
-                    <button type="button" class="btn btn-secondary w-100 address-btn" type="button">Set Address *</button>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">Save</button>
-                </div>
-            </div>
-        </form>
-        <table class="table table-bordered" id="person-table">
-            <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone <span class="text-muted small">(optional)</span></th>
-                <th>Address</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-    <div id="student-section" style="display:none">
-        <form id="student-form" class="mb-3">
-            <input type="hidden" id="student-id">
-            <div class="row g-2">
-                <div class="col-md-2"><input type="text" id="studentFirstName" class="form-control" placeholder="First Name *"></div>
-                <div class="col-md-2"><input type="text" id="studentLastName" class="form-control" placeholder="Last Name *"></div>
-                <div class="col-md-2"><input type="email" id="studentEmail" class="form-control" placeholder="Email *"></div>
-                <div class="col-md-2"><input type="text" id="studentPhone" class="form-control" placeholder="Phone"></div>
-                <div class="col-md-2"><input type="text" id="studentNumber" class="form-control" placeholder="Student Number *"></div>
-                <div class="col-md-2"><input type="number" id="averageMark" class="form-control" placeholder="Average Mark *"></div>
-                <div class="col-md-2"><button type="button" class="btn btn-secondary w-100 address-btn" type="button">Set Address *</button></div>
-                <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Save</button></div>
-            </div>
-        </form>
-        <table class="table table-bordered" id="student-table">
-            <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone <span class="text-muted small">(optional)</span></th>
-                <th>Student Number</th>
-                <th>Average Mark</th>
-                <th>Address</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-    <div id="professor-section" style="display:none">
-        <form id="professor-form" class="mb-3">
-            <input type="hidden" id="professor-id">
-            <div class="row g-2">
-                <div class="col-md-2"><input type="text" id="professorFirstName" class="form-control" placeholder="First Name *"></div>
-                <div class="col-md-2"><input type="text" id="professorLastName" class="form-control" placeholder="Last Name *"></div>
-                <div class="col-md-2"><input type="email" id="professorEmail" class="form-control" placeholder="Email *"></div>
-                <div class="col-md-2"><input type="text" id="professorPhone" class="form-control" placeholder="Phone"></div>
-                <div class="col-md-2"><input type="number" id="salary" class="form-control" placeholder="Salary *"></div>
-                <div class="col-md-2"><button type="button" class="btn btn-secondary w-100 address-btn" type="button">Set Address *</button></div>
-                <div class="col-md-2"><button type="submit" class="btn btn-primary w-100">Save</button></div>
-            </div>
-        </form>
-        <table class="table table-bordered" id="professor-table">
-            <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone <span class="text-muted small">(optional)</span></th>
-                <th>Salary</th>
-                <th>Address</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-    <!-- Address Modal -->
-    <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addressModalLabel">Set Address (optional)</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  <div class="container d-flex align-items-center justify-content-center" style="min-height:100vh;">
+    <div class="card p-4" style="max-width:720px; width:100%;">
+      <h1 class="h4 mb-3">Backend de CRUD – Spring Boot</h1>
+      <p class="text-muted mb-4">
+        Este backend está funcionando correctamente. El frontend (Vue) se sirve por separado.
+      </p>
+
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded-2 h-100">
+            <h2 class="h6">Salud y diagnóstico</h2>
+            <ul class="mb-0 small">
+              <li><a href="/api/health/db">/api/health/db</a></li>
+              <li><a href="/api/auth/debug">/api/auth/debug</a></li>
+            </ul>
           </div>
-          <div class="modal-body">
-            <div class="mb-2"><input type="text" id="modalStreet" class="form-control" placeholder="Street"></div>
-            <div class="mb-2"><input type="text" id="modalCity" class="form-control" placeholder="City"></div>
-            <div class="mb-2"><input type="text" id="modalState" class="form-control" placeholder="State"></div>
-            <div class="mb-2"><input type="text" id="modalPostalCode" class="form-control" placeholder="Postal Code"></div>
-            <div class="mb-2"><input type="text" id="modalCountry" class="form-control" placeholder="Country"></div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" id="saveAddressBtn">Save Address</button>
+        </div>
+        <div class="col-md-6">
+          <div class="p-3 bg-light rounded-2 h-100">
+            <h2 class="h6">Autenticación</h2>
+            <p class="small mb-1">Para iniciar sesión, usa:</p>
+            <ul class="small">
+              <li>Página de login: <a href="/login">/login</a></li>
+              <li>OAuth2 (GitHub): <a href="/oauth2/authorization/github">/oauth2/authorization/github</a></li>
+            </ul>
           </div>
         </div>
       </div>
+
+      <hr />
+      <div class="small text-muted">
+        Endpoints principales (requieren sesión):
+        <code>/api/persons</code>, <code>/api/students</code>, <code>/api/professors</code>, <code>/api/addresses</code>
+      </div>
     </div>
-</div>
-<script>
-// API endpoints
-const apiUrl = '/api/persons';
-const studentApiUrl = '/api/students';
-const professorApiUrl = '/api/professors';
-
-// Address state
-let currentAddress = null;
-let currentFormType = 'person'; // person, student, professor
-
-// Tab switching
-document.getElementById('tab-persons').addEventListener('click', function(e) {
-    e.preventDefault();
-    setActiveTab('tab-persons');
-    showSection('person');
-});
-document.getElementById('tab-students').addEventListener('click', function(e) {
-    e.preventDefault();
-    setActiveTab('tab-students');
-    showSection('student');
-});
-document.getElementById('tab-professors').addEventListener('click', function(e) {
-    e.preventDefault();
-    setActiveTab('tab-professors');
-    showSection('professor');
-});
-
-function setActiveTab(tabId) {
-    document.querySelectorAll('#mainTabs .nav-link').forEach(tab => tab.classList.remove('active'));
-    document.getElementById(tabId).classList.add('active');
-    // Fetch data for the selected tab
-    if (tabId === 'tab-persons') fetchPersons();
-    if (tabId === 'tab-students') fetchStudents();
-    if (tabId === 'tab-professors') fetchProfessors();
-}
-
-function showSection(type) {
-    document.getElementById('person-section').style.display = type === 'person' ? '' : 'none';
-    document.getElementById('student-section').style.display = type === 'student' ? '' : 'none';
-    document.getElementById('professor-section').style.display = type === 'professor' ? '' : 'none';
-    currentFormType = type;
-}
-
-// Address modal logic (event delegation for dynamic buttons)
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('address-btn')) {
-        let addr = currentAddress || {};
-        document.getElementById('modalStreet').value = addr.street || '';
-        document.getElementById('modalCity').value = addr.city || '';
-        document.getElementById('modalState').value = addr.state || '';
-        document.getElementById('modalPostalCode').value = addr.postalCode || '';
-        document.getElementById('modalCountry').value = addr.country || '';
-        var modal = new bootstrap.Modal(document.getElementById('addressModal'));
-        modal.show();
-    }
-});
-document.getElementById('saveAddressBtn').addEventListener('click', function() {
-    currentAddress = {
-        street: document.getElementById('modalStreet').value,
-        city: document.getElementById('modalCity').value,
-        state: document.getElementById('modalState').value,
-        postalCode: document.getElementById('modalPostalCode').value,
-        country: document.getElementById('modalCountry').value
-    };
-    let label = Object.values(currentAddress).filter(Boolean).join(', ');
-    if (currentFormType === 'person') {
-        document.getElementById('person-form').querySelector('.address-btn').textContent = label ? label : 'Set Address *';
-    } else if (currentFormType === 'student') {
-        document.getElementById('student-form').querySelector('.address-btn').textContent = label ? label : 'Set Address *';
-    } else if (currentFormType === 'professor') {
-        document.getElementById('professor-form').querySelector('.address-btn').textContent = label ? label : 'Set Address *';
-    }
-    var modal = bootstrap.Modal.getInstance(document.getElementById('addressModal'));
-    modal.hide();
-});
-
-function fetchPersons() {
-    fetch(apiUrl)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.querySelector('#person-table tbody');
-            tbody.innerHTML = '';
-            data.forEach(person => {
-                const address = person.address || {};
-                const addressLabel = address.street ? `${address.street}, ${address.city}, ${address.state}, ${address.postalCode}, ${address.country}` : '';
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${person.firstName}</td>
-                    <td>${person.lastName}</td>
-                    <td>${person.email}</td>
-                    <td>${person.phone || ''}</td>
-                    <td>${addressLabel}</td>
-                    <td>
-                        <button class='btn btn-sm btn-warning' onclick='editPerson(${person.id})'>Edit</button>
-                        <button class='btn btn-sm btn-danger' onclick='deletePerson(${person.id})'>Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        });
-}
-
-function editPerson(id) {
-    fetch(`${apiUrl}/${id}`)
-        .then(res => res.json())
-        .then(person => {
-            document.getElementById('person-id').value = person.id;
-            document.getElementById('firstName').value = person.firstName;
-            document.getElementById('lastName').value = person.lastName;
-            document.getElementById('email').value = person.email;
-            document.getElementById('phone').value = person.phone || '';
-            const address = person.address || {};
-            currentAddress = address;
-            let label = Object.values(address).filter(Boolean).join(', ');
-            document.getElementById('person-form').querySelector('.btn-secondary').textContent = label ? label : 'Set Address (optional)';
-        });
-}
-
-function deletePerson(id) {
-    fetch(`${apiUrl}/${id}`, { method: 'DELETE' })
-        .then(() => fetchPersons());
-}
-
-document.getElementById('person-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = document.getElementById('person-id').value;
-    const person = {
-        firstName: document.getElementById('firstName').value,
-        lastName: document.getElementById('lastName').value,
-        email: document.getElementById('email').value,
-        phone: document.getElementById('phone').value,
-        address: currentAddress
-    };
-    if (id) {
-        fetch(`${apiUrl}/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(person)
-        }).then(() => {
-            this.reset();
-            currentAddress = null;
-            document.getElementById('person-form').querySelector('.btn-secondary').textContent = 'Set Address (optional)';
-            fetchPersons();
-        });
-    } else {
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(person)
-        }).then(() => {
-            this.reset();
-            currentAddress = null;
-            document.getElementById('person-form').querySelector('.btn-secondary').textContent = 'Set Address (optional)';
-            fetchPersons();
-        });
-    }
-});
-
-
-// Student CRUD
-document.getElementById('student-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = document.getElementById('student-id').value;
-    const student = {
-        firstName: document.getElementById('studentFirstName').value,
-        lastName: document.getElementById('studentLastName').value,
-        email: document.getElementById('studentEmail').value,
-        phone: document.getElementById('studentPhone').value,
-        studentNumber: document.getElementById('studentNumber').value,
-        averageMark: document.getElementById('averageMark').value,
-        address: currentAddress
-    };
-    if (id) {
-        fetch(`${studentApiUrl}/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(student)
-        }).then(() => {
-            this.reset();
-            currentAddress = null;
-            document.getElementById('student-form').querySelector('.address-btn').textContent = 'Set Address *';
-            fetchStudents();
-        });
-    } else {
-        fetch(studentApiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(student)
-        }).then(() => {
-            this.reset();
-            currentAddress = null;
-            document.getElementById('student-form').querySelector('.address-btn').textContent = 'Set Address *';
-            fetchStudents();
-        });
-    }
-});
-
-function fetchStudents() {
-    fetch(studentApiUrl)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.querySelector('#student-table tbody');
-            tbody.innerHTML = '';
-            data.forEach(student => {
-                const address = student.address || {};
-                const addressLabel = address.street ? `${address.street}, ${address.city}, ${address.state}, ${address.postalCode}, ${address.country}` : '';
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${student.firstName}</td>
-                    <td>${student.lastName}</td>
-                    <td>${student.email}</td>
-                    <td>${student.phone || ''}</td>
-                    <td>${student.studentNumber}</td>
-                    <td>${student.averageMark}</td>
-                    <td>${addressLabel}</td>
-                    <td>
-                        <button class='btn btn-sm btn-warning' onclick='editStudent(${student.id})'>Edit</button>
-                        <button class='btn btn-sm btn-danger' onclick='deleteStudent(${student.id})'>Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        });
-}
-
-function editStudent(id) {
-    fetch(`${studentApiUrl}/${id}`)
-        .then(res => res.json())
-        .then(student => {
-            document.getElementById('student-id').value = student.id;
-            document.getElementById('studentFirstName').value = student.firstName;
-            document.getElementById('studentLastName').value = student.lastName;
-            document.getElementById('studentEmail').value = student.email;
-            document.getElementById('studentPhone').value = student.phone || '';
-            document.getElementById('studentNumber').value = student.studentNumber;
-            document.getElementById('averageMark').value = student.averageMark;
-            const address = student.address || {};
-            currentAddress = address;
-            let label = Object.values(address).filter(Boolean).join(', ');
-            document.getElementById('student-form').querySelector('.address-btn').textContent = label ? label : 'Set Address *';
-        });
-}
-
-function deleteStudent(id) {
-    fetch(`${studentApiUrl}/${id}`, { method: 'DELETE' })
-        .then(() => fetchStudents());
-}
-
-// Professor CRUD
-document.getElementById('professor-form').addEventListener('submit', function(e) {
-    e.preventDefault();
-    const id = document.getElementById('professor-id').value;
-    const professor = {
-        firstName: document.getElementById('professorFirstName').value,
-        lastName: document.getElementById('professorLastName').value,
-        email: document.getElementById('professorEmail').value,
-        phone: document.getElementById('professorPhone').value,
-        salary: document.getElementById('salary').value,
-        address: currentAddress
-    };
-    if (id) {
-        fetch(`${professorApiUrl}/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(professor)
-        }).then(() => {
-            this.reset();
-            currentAddress = null;
-            document.getElementById('professor-form').querySelector('.address-btn').textContent = 'Set Address *';
-            fetchProfessors();
-        });
-    } else {
-        fetch(professorApiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(professor)
-        }).then(() => {
-            this.reset();
-            currentAddress = null;
-            document.getElementById('professor-form').querySelector('.address-btn').textContent = 'Set Address *';
-            fetchProfessors();
-        });
-    }
-});
-
-function fetchProfessors() {
-    fetch(professorApiUrl)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.querySelector('#professor-table tbody');
-            tbody.innerHTML = '';
-            data.forEach(professor => {
-                const address = professor.address || {};
-                const addressLabel = address.street ? `${address.street}, ${address.city}, ${address.state}, ${address.postalCode}, ${address.country}` : '';
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${professor.firstName}</td>
-                    <td>${professor.lastName}</td>
-                    <td>${professor.email}</td>
-                    <td>${professor.phone || ''}</td>
-                    <td>${professor.salary}</td>
-                    <td>${addressLabel}</td>
-                    <td>
-                        <button class='btn btn-sm btn-warning' onclick='editProfessor(${professor.id})'>Edit</button>
-                        <button class='btn btn-sm btn-danger' onclick='deleteProfessor(${professor.id})'>Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        });
-}
-
-function editProfessor(id) {
-    fetch(`${professorApiUrl}/${id}`)
-        .then(res => res.json())
-        .then(professor => {
-            document.getElementById('professor-id').value = professor.id;
-            document.getElementById('professorFirstName').value = professor.firstName;
-            document.getElementById('professorLastName').value = professor.lastName;
-            document.getElementById('professorEmail').value = professor.email;
-            document.getElementById('professorPhone').value = professor.phone || '';
-            document.getElementById('salary').value = professor.salary;
-            const address = professor.address || {};
-            currentAddress = address;
-            let label = Object.values(address).filter(Boolean).join(', ');
-            document.getElementById('professor-form').querySelector('.address-btn').textContent = label ? label : 'Set Address *';
-        });
-}
-
-function deleteProfessor(id) {
-    fetch(`${professorApiUrl}/${id}`, { method: 'DELETE' })
-        .then(() => fetchProfessors());
-}
-
-fetchPersons();
-</script>
+  </div>
 </body>
 </html>

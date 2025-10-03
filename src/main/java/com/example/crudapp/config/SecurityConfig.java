@@ -146,12 +146,16 @@ public class SecurityConfig {
             @Value("${app.security.user.name:dev}") String username,
             @Value("${app.security.user.password:}") String password
     ) {
-        // {noop} to avoid requiring a PasswordEncoder for dev only
+    // Solo crear el usuario si nombre y contraseña fueron provistos por variables de entorno.
+    if (username != null && !username.isBlank() && password != null && !password.isBlank()) {
         UserDetails user = User.withUsername(username)
-                .password("{noop}" + password)
-                .roles("USER")
-                .build();
+            .password("{noop}" + password)
+            .roles("USER")
+            .build();
         return new InMemoryUserDetailsManager(user);
+    }
+    // Si está habilitado pero no se configuraron credenciales, no crear ningún usuario.
+    return new InMemoryUserDetailsManager();
     }
 
     @Bean
