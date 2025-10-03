@@ -71,7 +71,7 @@ public class SecurityConfig {
                     .requestMatchers("/static/**", "/", "/index.html", "/login", "/login.html", "/oauth2/**", "/login/**", "/login/oauth2/**", "/api/auth/me", "/api/auth/debug", "/api/health/**").permitAll()
                     .anyRequest().authenticated()
                 )
-                // Habilitar HTTP Basic para herramientas como Postman con usuario dev/dev123
+                // Habilitar HTTP Basic para herramientas como Postman (si se define un usuario en el entorno)
                 .httpBasic(basic -> {})
                 // Usar /login como página única: incluye formulario y link a GitHub
                 .oauth2Login(o -> o
@@ -144,7 +144,7 @@ public class SecurityConfig {
     @ConditionalOnProperty(name = "app.security.dev-user.enabled", havingValue = "true", matchIfMissing = true)
     public UserDetailsService inMemoryUsers(
             @Value("${app.security.user.name:dev}") String username,
-            @Value("${app.security.user.password:dev123}") String password
+            @Value("${app.security.user.password:}") String password
     ) {
         // {noop} to avoid requiring a PasswordEncoder for dev only
         UserDetails user = User.withUsername(username)

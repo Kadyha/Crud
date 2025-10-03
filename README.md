@@ -1,3 +1,18 @@
+## Pruebas automatizadas (JUnit + Postman/Newman)
+
+La rama `main` ejecuta un workflow de GitHub Actions que:
+- Construye el proyecto con JDK 17 y Maven (`mvn test`).
+- Levanta MySQL 8 como servicio de CI.
+- Empaqueta la app y la arranca con el perfil `mysql-local`.
+- Ejecuta las colecciones de Postman (REST y SOAP) con Newman y publica reportes HTML como artefactos.
+
+Estado: ![CI](https://github.com/Kadyha/crud/actions/workflows/ci.yml/badge.svg)
+
+Artefactos de CI: `newman/report-rest.html` y `newman/report-soap.html`.
+
+Cómo correr localmente:
+- JUnit/MockMvc: `mvn test`
+- API con Newman: ver `newman/README.md` (requiere backend arriba en `http://localhost:8080`).
 # CRUD App - Spring Boot + Vue.js
 
 Live demo (Vercel): https://crud-cohan.vercel.app
@@ -12,15 +27,26 @@ Incluye autenticación (form login DEV y OAuth2 GitHub), datos seed (Docker), pr
 
 ---
 
+## Colecciones de Postman (para probar servicios)
+
+- Ubicación: `documentation/postman/`
+   - CRUD REST: `Crud-App.postman_collection.json`
+   - SOAP: `Crud-App-SOAP.postman_collection.json`
+   - Environments: `environments/Crud-App-Local.postman_environment.json` y `environments/Crud-App-Cloud.postman_environment.json`
+- Configura `baseUrl` según corresponda (localhost:8080 o dominio cloud).
+- Para login por formulario utiliza la request “Login (local form)” que publica a `/perform_login`.
+
+---
+
 ## Guía rápida para evaluación (COHAN)
 
 Objetivo: probar en minutos la app en producción y, si se desea, correrla en local con Docker.
 
 1) Producción (recomendado)
    - Abrir: https://crud-cohan.vercel.app
-   - Login:
-     - Opción 1: “Continuar con GitHub” (OAuth2 ya configurado)
-     - Opción 2: usuario dev / contraseña dev123 (form login)
+    - Login:
+       - Opción 1: “Continuar con GitHub” (OAuth2)
+       - Opción 2: formulario (si se habilitó un usuario local en el entorno de prueba)
    - Verificar:
      - Pestañas Persons / Students / Professors (CRUD)
      - Crear/editar un registro y ver la lista actualizada
@@ -36,7 +62,7 @@ Objetivo: probar en minutos la app en producción y, si se desea, correrla en lo
      ```powershell
      docker compose up -d --build
      ```
-   - Abrir: http://localhost:5173 (login dev/dev123)
+   - Abrir: http://localhost:5173
    - DB Admin (opcional): http://localhost:8081 (Server=db, User=appuser, Pass=apppass, DB=crudapp)
 
 4) Qué evalúa esta prueba (checklist)
@@ -104,7 +130,7 @@ Qué enviar a revisión (local)
 - Instrucciones rápidas:
    - `docker compose up -d --build`
    - Abrir http://localhost:5173
-   - Usuario dev/dev123 ó GitHub si configuran el OAuth local (callback a localhost:5173)
+   - Login por GitHub si configuran el OAuth local (callback a localhost:5173)
    - Adminer: http://localhost:8081
 
 ### Opción B: Desarrollo local (sin Docker)
@@ -126,6 +152,20 @@ npm run dev
 - SPA: http://localhost:5173
 
 Para usar MySQL en local, ejecuta con el perfil `mysql-local` y configura `application-mysql-local.properties`.
+
+### Pruebas con Postman (colecciones incluidas)
+
+- Colección REST: `documentation/postman/Crud-App.postman_collection.json`
+- Colección SOAP: `documentation/postman/Crud-App-SOAP.postman_collection.json`
+- Environments:
+   - Local: `documentation/postman/environments/Crud-App-Local.postman_environment.json`
+   - Cloud: `documentation/postman/environments/Crud-App-Cloud.postman_environment.json`
+
+Pasos:
+1) Importa la colección y el environment en Postman.
+2) Ajusta `baseUrl` si es necesario.
+3) Usa la petición “Login (local form)” que POSTea a `/perform_login`. Postman gestionará la cookie de sesión.
+4) Ejecuta el folder de endpoints para validar CRUD.
 
 ### Opción C: Cloud (Vercel + Railway)
 Objetivo: mismo comportamiento que Docker (mismo origen) usando rewrites.
@@ -197,9 +237,8 @@ En Vercel (mismo origen): `https://crud-cohan.vercel.app/api/persons`
 ---
 
 ## Autenticación y Seguridad
-- Página de login única en el backend (`/login`), con:
-  - Form login DEV: usuario `dev` / password `dev123` (configurable, desactivable en PROD)
-  - Botón “Continuar con GitHub” (OAuth2)
+- Página de login única en el backend (`/login`), con form login y botón “Continuar con GitHub” (OAuth2).
+- El usuario en memoria para DEV está deshabilitado por defecto y no se publica ninguna credencial en este repo. Para habilitarlo en un entorno controlado, usa variables de entorno: `APP_SECURITY_DEV_USER_ENABLED=true`, `APP_SECURITY_USER_NAME`, `APP_SECURITY_USER_PASSWORD`.
 - La SPA redirige automáticamente a `/login` si el usuario no está autenticado.
 - En Docker y Vercel se usa “mismo origen” (same-origin) para API/Auth, lo que asegura el funcionamiento de cookies de sesión incluso en incógnito.
 - Endpoints abiertos para diagnóstico: `/api/auth/debug`, `/api/health/db`

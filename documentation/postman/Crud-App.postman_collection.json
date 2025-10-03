@@ -15,7 +15,7 @@
             "header": [
               { "key": "Content-Type", "value": "application/x-www-form-urlencoded" }
             ],
-            "url": { "raw": "{{baseUrl}}/login", "host": ["{{baseUrl}}"], "path": ["login"] },
+            "url": { "raw": "{{baseUrl}}/perform_login", "host": ["{{baseUrl}}"], "path": ["perform_login"] },
             "body": {
               "mode": "urlencoded",
               "urlencoded": [
@@ -101,7 +101,7 @@
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:8080" },
     { "key": "username", "value": "dev" },
-    { "key": "password", "value": "dev123" },
+  { "key": "password", "value": "" },
     { "key": "id", "value": "1" }
   ]
 }

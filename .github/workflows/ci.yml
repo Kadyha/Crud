@@ -1,0 +1,102 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build-test-and-api:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: crudapp
+          MYSQL_USER: appuser
+          MYSQL_PASSWORD: apppass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Run unit tests
+        run: mvn -B -ntp test
+
+      - name: Package application
+        run: mvn -B -ntp -DskipTests package
+
+      - name: Start application (MySQL local profile)
+        run: |
+          nohup java -jar target/crud-app-0.0.1-SNAPSHOT.jar \
+            --spring.profiles.active=mysql-local \
+            --spring.datasource.password=root \
+            --server.port=8080 > app.log 2>&1 &
+
+      - name: Wait for app to be ready
+        run: |
+          for i in {1..40}; do
+            if curl -fsS http://localhost:8080/api/health/db >/dev/null; then
+              echo "App is up"; exit 0; fi; sleep 3; done;
+          echo "App failed to start";
+          tail -n 400 app.log || true;
+          exit 1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Newman
+        run: npm i -g newman newman-reporter-htmlextra
+
+      - name: Run Postman REST collection
+        run: |
+          newman run documentation/postman/Crud-App.postman_collection.json \
+            -e documentation/postman/environments/Crud-App-Local.postman_environment.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export newman/report-rest.html
+
+      - name: Run Postman SOAP collection
+        run: |
+          newman run documentation/postman/Crud-App-SOAP.postman_collection.json \
+            -e documentation/postman/environments/Crud-App-Local.postman_environment.json \
+            --reporters cli,htmlextra \
+            --reporter-htmlextra-export newman/report-soap.html
+
+      - name: Upload Newman reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-reports
+          path: newman/*.html
+
+      - name: Upload app log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-log
+          path: app.log
