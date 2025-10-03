@@ -10,6 +10,9 @@
     body { background: #f5f7fb; }
     .card { border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
     .brand { font-weight: 700; }
+    .separator { display:flex; align-items:center; gap:.75rem; color:#6c757d; font-size:.9rem; margin:1rem 0; }
+    .separator::before, .separator::after { content:""; flex:1; height:1px; background:rgba(0,0,0,0.08); }
+    .btn-social { display:flex; align-items:center; justify-content:center; gap:.5rem; }
   </style>
 </head>
 <body>
@@ -22,7 +25,7 @@
         Usuario o contraseña incorrectos.
       </div>
 
-      <form method="post" action="/perform_login">
+      <form method="post" action="/perform_login" class="mb-0">
         <div class="mb-3">
           <label class="form-label">Usuario</label>
           <input class="form-control" type="text" name="username" placeholder="usuario" required />
@@ -34,8 +37,10 @@
         <button type="submit" class="btn btn-primary w-100">Entrar</button>
       </form>
       
-<div class="d-grid gap-2 mb-3" id="socialButtons">
-        <a id="btnGithub" class="btn btn-dark" href="/oauth2/authorization/github" style="background:#161b22;border-color:#161b22">
+      <!-- Separador y botones sociales para frontend (Vercel) -->
+      <div id="socialSeparator" class="separator mt-3"><span>o continúa con</span></div>
+      <div class="d-grid gap-2" id="socialButtons">
+        <a id="btnGithub" class="btn btn-dark btn-social" href="/oauth2/authorization/github" style="background:#161b22;border-color:#161b22">
           Continuar con GitHub
         </a>
       </div>
@@ -52,12 +57,18 @@
         }
       } catch(e) { /* no-op */ }
 
-      // Si no estamos en Vercel (backend directo), oculta SOLO el botón de GitHub
+      // Si no estamos en Vercel (backend directo), oculta botones sociales y separador
       try {
         const host = (location.host || '').toLowerCase();
         if (!host.endsWith('.vercel.app')) {
           const btnGithub = document.getElementById('btnGithub');
+          const btnGitlab = document.getElementById('btnGitlab');
+          const social = document.getElementById('socialButtons');
+          const sep = document.getElementById('socialSeparator');
           if (btnGithub) btnGithub.remove();
+          if (btnGitlab) btnGitlab.remove();
+          if (social) social.remove();
+          if (sep) sep.remove();
         }
       } catch(e) { /* no-op */ }
     })();

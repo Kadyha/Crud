@@ -33,7 +33,7 @@ Incluye autenticación (form login DEV y OAuth2 GitHub), datos seed (Docker), pr
    - CRUD REST: `Crud-App.postman_collection.json`
    - SOAP: `Crud-App-SOAP.postman_collection.json`
    - Environments: `environments/Crud-App-Local.postman_environment.json` y `environments/Crud-App-Cloud.postman_environment.json`
-- Configura `baseUrl` según corresponda (localhost:8080 o dominio cloud).
+- Configura `baseUrl` según corresponda (localhost:8080 o crud-production-d05d.up.railway.app).
 - Para login por formulario utiliza la request “Login (local form)” que publica a `/perform_login`.
 
 ---
