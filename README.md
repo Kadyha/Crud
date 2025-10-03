@@ -12,6 +12,48 @@ Incluye autenticación (form login DEV y OAuth2 GitHub), datos seed (Docker), pr
 
 ---
 
+## Guía rápida para evaluación (COHAN)
+
+Objetivo: probar en minutos la app en producción y, si se desea, correrla en local con Docker.
+
+1) Producción (recomendado)
+   - Abrir: https://crud-cohan.vercel.app
+   - Login:
+     - Opción 1: “Continuar con GitHub” (OAuth2 ya configurado)
+     - Opción 2: usuario dev / contraseña dev123 (form login)
+   - Verificar:
+     - Pestañas Persons / Students / Professors (CRUD)
+     - Crear/editar un registro y ver la lista actualizada
+     - Salud DB: https://crud-cohan.vercel.app/api/health/db → {"status":"UP"}
+     - Depuración OAuth: https://crud-cohan.vercel.app/api/auth/debug (muestra baseUrl y redirect)
+
+2) ¿Cómo funciona (1 párrafo)?
+   - Frontend (Vercel) llama a “/api” y rutas de auth en el mismo origen; Vercel reescribe esas rutas al backend (Railway). Así las cookies de sesión funcionan en todos los navegadores y no hay CORS. El backend expone REST/SPA/SOAP y persiste en MySQL.
+
+3) Opcional: ejecutar en local con Docker (1 comando)
+   - Requisitos: Docker Desktop
+   - Levantar todo:
+     ```powershell
+     docker compose up -d --build
+     ```
+   - Abrir: http://localhost:5173 (login dev/dev123)
+   - DB Admin (opcional): http://localhost:8081 (Server=db, User=appuser, Pass=apppass, DB=crudapp)
+
+4) Qué evalúa esta prueba (checklist)
+   - CRUD completo (Person, Student, Professor, Address) por REST y SOAP
+   - Seguridad: form login + OAuth2 GitHub; logout; redirecciones correctas
+   - Persistencia en MySQL (Railway / Docker), esquema con JPA
+   - Observabilidad básica: /api/health/db y /api/auth/debug
+   - Front responsivo y simple (Vue + Bootstrap)
+
+5) Enlaces útiles
+   - REST: https://crud-cohan.vercel.app/api/persons (requiere sesión)
+   - SOAP: https://crud-cohan.vercel.app/ws (usar Postman/SoapUI)
+   - Diagnóstico DB: https://crud-cohan.vercel.app/api/health/db
+   - Diagnóstico OAuth: https://crud-cohan.vercel.app/api/auth/debug
+
+---
+
 ## Endpoints principales
 - REST: `/api/persons`, `/api/students`, `/api/professors`, `/api/addresses`
 - SOAP: `/ws` (contratos bajo el namespace `http://example.com/crudapp/soap`)
@@ -21,7 +63,7 @@ Incluye autenticación (form login DEV y OAuth2 GitHub), datos seed (Docker), pr
 
 ## Cómo ejecutar
 
-### Opción A: Docker Compose (recomendado para demo local)
+### Opción A: Docker Compose (recomendado para demo local y para revisión)
 Prerequisitos: Docker y Docker Compose.
 
 1) Construir y levantar
@@ -57,6 +99,14 @@ docker compose build backend ; docker compose up -d backend
 ```
 4) Verifica en `http://localhost:5173/api/auth/debug` que aparece tu `clientId` y `redirectUriTemplate`
 
+Qué enviar a revisión (local)
+- Este mismo repo con `docker-compose.yml` y `frontend/nginx.conf` ya listos.
+- Instrucciones rápidas:
+   - `docker compose up -d --build`
+   - Abrir http://localhost:5173
+   - Usuario dev/dev123 ó GitHub si configuran el OAuth local (callback a localhost:5173)
+   - Adminer: http://localhost:8081
+
 ### Opción B: Desarrollo local (sin Docker)
 Backend
 ```powershell
@@ -83,7 +133,9 @@ Objetivo: mismo comportamiento que Docker (mismo origen) usando rewrites.
 1) Railway (backend)
 - Variables:
   - `SPRING_PROFILES_ACTIVE=railway`
-  - DB: `MYSQL_URL` (o `MYSQLHOST`/`MYSQLPORT`/`MYSQLDATABASE`/`MYSQLUSER`/`MYSQLPASSWORD`)
+   - DB: usar `SPRING_DATASOURCE_URL/USERNAME/PASSWORD` (proxy público) o enlazar el recurso MySQL y dejar que el perfil `railway` lea `MYSQLHOST/MYSQLPORT/...`.
+      - Ejemplo proxy público: `SPRING_DATASOURCE_URL=jdbc:mysql://<host>:<port>/<db>?sslMode=REQUIRED&allowPublicKeyRetrieval=true&serverTimezone=UTC`
+      - `SPRING_DATASOURCE_USERNAME=root`, `SPRING_DATASOURCE_PASSWORD=<pass>`
   - `APP_FRONTEND_URL=https://crud-cohan.vercel.app`
   - OAuth2 (opcional): `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`
 - Cookies cross-site y headers forward ya están configurados en el perfil `railway`.
@@ -91,7 +143,10 @@ Objetivo: mismo comportamiento que Docker (mismo origen) usando rewrites.
 
 2) Vercel (frontend)
 - El proyecto incluye `frontend/vercel.json` con rewrites para `/api`, `/login`, `/perform_login`, `/logout`, `/oauth2/*`, `/login/oauth2/*` hacia Railway.
-- VITE_API_URL está configurado a `/api` para usar mismo origen (evita bloqueos de cookies en incognito).
+- Variables en Vercel:
+   - `VITE_API_URL=/api` (misma-origin). No pongas secretos de GitHub aquí.
+   - (opcional) `VITE_AUTH_PROVIDER=oauth`.
+   - Redeploy para aplicar.
 - Despliega y abre: `https://crud-cohan.vercel.app`
 
 3) GitHub OAuth en producción (Vercel)
@@ -99,6 +154,11 @@ Objetivo: mismo comportamiento que Docker (mismo origen) usando rewrites.
   - Homepage URL: `https://crud-cohan.vercel.app`
   - Authorization callback URL: `https://crud-cohan.vercel.app/login/oauth2/code/github`
 - Si ves “redirect_uri is not associated…”, revisa que el callback sea EXACTO.
+ - En Railway (backend): `GITHUB_CLIENT_ID/SECRET` y (si hiciera falta forzar) `SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GITHUB_REDIRECT_URI=https://crud-cohan.vercel.app/login/oauth2/code/github`.
+ - Verifica en `https://crud-cohan.vercel.app/api/auth/debug`:
+    - `detectedBaseUrl` debe ser el dominio de Vercel.
+    - `resolvedRedirectUri` debe apuntar a `/login/oauth2/code/github` en Vercel.
+ - Prueba el botón “GitHub”.
 
 ---
 
@@ -149,6 +209,7 @@ En Vercel (mismo origen): `https://crud-cohan.vercel.app/api/persons`
 ## Salud y Diagnóstico
 - `GET /api/health/db`: SELECT 1 contra la base (UP/DOWN)
 - `GET /api/auth/debug`: muestra configuración activa de OAuth2 (clientId, redirectUriTemplate)
+ - `GET /api/debug/db`: muestra el JDBC URL y usuario efectivos (sanitizados) — útil para Railway.
 
 ---
 
