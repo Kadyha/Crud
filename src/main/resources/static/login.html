@@ -22,17 +22,6 @@
         Usuario o contraseña incorrectos.
       </div>
 
-      <div class="d-grid gap-2 mb-3" id="socialButtons">
-        <a id="btnGithub" class="btn btn-dark" href="/oauth2/authorization/github" style="background:#161b22;border-color:#161b22">
-          Continuar con GitHub
-        </a>
-        <a id="btnGitlab" class="btn btn-outline-secondary" href="#" disabled aria-disabled="true">
-          Continuar con GitLab (próximamente)
-        </a>
-      </div>
-
-      <div class="text-center text-muted small mb-2">o con usuario y contraseña</div>
-
       <form method="post" action="/perform_login">
         <div class="mb-3">
           <label class="form-label">Usuario</label>
@@ -44,7 +33,12 @@
         </div>
         <button type="submit" class="btn btn-primary w-100">Entrar</button>
       </form>
-
+      
+<div class="d-grid gap-2 mb-3" id="socialButtons">
+        <a id="btnGithub" class="btn btn-dark" href="/oauth2/authorization/github" style="background:#161b22;border-color:#161b22">
+          Continuar con GitHub
+        </a>
+      </div>
       
     </div>
   </div>
