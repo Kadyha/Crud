@@ -1,12 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.example.crudapp.controller.ProfessorControllerTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.02 s <<< FAILURE! - in com.example.crudapp.controller.ProfessorControllerTest
-testGetAllProfessors  Time elapsed: 0.007 s  <<< FAILURE!
-java.lang.AssertionError: Status expected:<200> but was:<302>
-	at com.example.crudapp.controller.ProfessorControllerTest.testGetAllProfessors(ProfessorControllerTest.java:22)
-
-testCreateProfessor  Time elapsed: 0.01 s  <<< FAILURE!
-java.lang.AssertionError: Status expected:<200> but was:<302>
-	at com.example.crudapp.controller.ProfessorControllerTest.testCreateProfessor(ProfessorControllerTest.java:42)
-
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.050 s -- in com.example.crudapp.controller.ProfessorControllerTest

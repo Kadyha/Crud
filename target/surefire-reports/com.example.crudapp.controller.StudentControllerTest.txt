@@ -1,12 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.example.crudapp.controller.StudentControllerTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 2, Errors: 0, Skipped: 0, Time elapsed: 0.02 s <<< FAILURE! - in com.example.crudapp.controller.StudentControllerTest
-testCreateStudent  Time elapsed: 0.006 s  <<< FAILURE!
-java.lang.AssertionError: Status expected:<200> but was:<302>
-	at com.example.crudapp.controller.StudentControllerTest.testCreateStudent(StudentControllerTest.java:42)
-
-testGetAllStudents  Time elapsed: 0.007 s  <<< FAILURE!
-java.lang.AssertionError: Status expected:<200> but was:<302>
-	at com.example.crudapp.controller.StudentControllerTest.testGetAllStudents(StudentControllerTest.java:22)
-
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.050 s -- in com.example.crudapp.controller.StudentControllerTest
